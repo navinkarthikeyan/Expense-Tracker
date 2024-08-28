@@ -53,8 +53,12 @@ export const Login = () => {
           <span>Forgot Password ?</span>
         </div>
         <div className="submit-container">
-          <div className="submit">
-            <Link to="/register">SignUp</Link>
+          <div>
+            <button className="submit">
+              <Link className="signup" to="/register">
+                Register
+              </Link>
+            </button>
           </div>
           <button className="submit">Login</button>
         </div>
