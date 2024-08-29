@@ -50,7 +50,9 @@ export const Login = () => {
           </div>
         </div>
         <div className="forgot-password">
-          <span>Forgot Password ?</span>
+          <Link to="/password-reset-request">
+            <span>Forgot Password ?</span>
+          </Link>
         </div>
         <div className="submit-container">
           <div>
