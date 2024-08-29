@@ -31,19 +31,25 @@ const PasswordResetConfirm = () => {
   };
 
   return (
-    <div>
-      <h2>Reset Password</h2>
+    <div className="resetcontainer">
+      <div className="border">
+        <div className="titlenew"> Reset Password </div>
+      </div>
       <form onSubmit={handleSubmit}>
-        <label>
-          New Password:
+        <div className="input">
           <input
             type="password"
             value={newPassword}
+            placeholder="New Password:"
             onChange={(e) => setNewPassword(e.target.value)}
             required
           />
-        </label>
-        <button type="submit">Reset Password</button>
+        </div>
+        <div className="newsubmit">
+          <button className="resetsubmit" type="submit">
+            Reset Password
+          </button>
+        </div>
       </form>
       {message && <p>{message}</p>}
       {error && <p>{error}</p>}

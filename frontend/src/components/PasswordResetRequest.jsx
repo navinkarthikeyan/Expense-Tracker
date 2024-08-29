@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./passwordreset.css";
 
 const PasswordResetRequest = () => {
   const [email, setEmail] = useState("");
@@ -20,18 +21,26 @@ const PasswordResetRequest = () => {
   };
 
   return (
-    <div>
-      <h2>Password Reset Request</h2>
+    <div className="resetcontainer">
+      <div className="title">Password Reset Request</div>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <button type="submit">Request Password Reset</button>
+        <div className="overall">
+          <div className="input">
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+        <div className="newsubmit">
+          <button className="resetsubmit" type="submit">
+            Send Request
+          </button>
+        </div>
       </form>
       {message && <p>{message}</p>}
     </div>
