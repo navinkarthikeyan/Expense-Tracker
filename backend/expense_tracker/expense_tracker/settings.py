@@ -151,4 +151,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'expensetrackerganit@gmail.com'  # Replace with your Gmail address
-EMAIL_HOST_PASSWORD = 'sduw alid sedf vdph'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
