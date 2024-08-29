@@ -1,25 +1,41 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { loginUser } from "../api";
+import { loginUser } from "../../../api";
+// import Button from "@mui/material/Button";
+import { toast } from "sonner";
 
-export const Login = () => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleRedirect = (role) => {
+    switch (role) {
+      case "admin": {
+        return navigate("/dashboard");
+      }
+      case "user": {
+        return navigate("/home");
+      }
+      default: {
+        return;
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const data = await loginUser({ username, password });
-      setMessage(`Login successful! Token: ${data.token}, Role: ${data.role}`);
-      setError("");
-    } catch (err) {
-      setError(err.non_field_errors || "Login failed");
-      console.log(err);
-      setMessage("");
-    }
+    const promise = loginUser({ username, password });
+    toast.promise(promise, {
+      loading: "Loading...",
+      success: (data) => {
+        handleRedirect(data?.role);
+        return `Login successful! Role: ${data.role}`;
+      },
+      error: (err) => {
+        return err.non_field_errors || "Login failed";
+      },
+    });
   };
 
   return (
@@ -50,7 +66,7 @@ export const Login = () => {
           </div>
         </div>
         <div className="forgot-password">
-          <Link to="/password-reset-request">
+          <Link to="/reset/request">
             <span>Forgot Password ?</span>
           </Link>
         </div>
@@ -62,11 +78,12 @@ export const Login = () => {
               </Link>
             </button>
           </div>
+          {/* <Button variant="contained">Login</Button> */}
           <button className="submit">Login</button>
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {message && <p style={{ color: "green" }}>{message}</p>}
       </form>
     </div>
   );
 };
+
+export default Login;

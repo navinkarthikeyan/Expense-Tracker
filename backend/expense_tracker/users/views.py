@@ -61,11 +61,9 @@ class PasswordResetRequestView(APIView):
         user = User.objects.filter(email=email).first()
         
         if user:
-            # Generate password reset token
+            
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            
-            # Render email template
             mail_subject = 'Password Reset Request'
             message = render_to_string('password_reset_email.html', {
                 'user': user,
@@ -74,8 +72,6 @@ class PasswordResetRequestView(APIView):
                 'protocol': 'http',
                 'domain': request.get_host(),
             })
-            
-            # Send email
             send_mail(mail_subject, message, 'from@example.com', [email])
         
         return Response({'message': 'Password reset email sent (if the email is registered).'}, status=status.HTTP_200_OK)

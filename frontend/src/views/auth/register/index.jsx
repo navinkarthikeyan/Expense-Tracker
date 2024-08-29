@@ -1,33 +1,31 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { registerUser } from "../api";
+import { registerUser } from "../../../api";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("user");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [role] = useState("user");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const data = await registerUser({
-        username,
-        password,
-        password2,
-        email,
-        role,
-      });
-      setMessage(`Registration successful! Token: ${data.token}`);
-      setError("");
-    } catch (err) {
-      setError(err.non_field_errors || "Registration failed");
-      setMessage("");
-    }
+    //???
+    const promise = registerUser({
+      username,
+      password,
+      password2,
+      email,
+      role,
+    });
+    toast.promise(promise, {
+      loading: "Loading...",
+      success: `Registration successful`,
+      error: (err) => {
+        return err.non_field_errors || "Registration failed";
+      },
+    });
   };
 
   return (
@@ -81,8 +79,6 @@ export default function Register() {
             Submit
           </button>
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {message && <p style={{ color: "green" }}>{message}</p>}
       </form>
     </div>
   );
