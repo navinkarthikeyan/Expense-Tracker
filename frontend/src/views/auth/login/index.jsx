@@ -3,11 +3,25 @@ import { useState } from "react";
 import { loginUser } from "../../../api";
 // import Button from "@mui/material/Button";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../../redux/user/slice";
+import { useCookies } from "react-cookie";
+import zxcvbn from "zxcvbn";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [passwordStrength, setPasswordStrength] = useState(0);
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    const strength = zxcvbn(newPassword).score;
+    setPassword(newPassword);
+    setPasswordStrength(strength);
+  };
 
   const handleRedirect = (role) => {
     switch (role) {
@@ -29,6 +43,8 @@ const Login = () => {
     toast.promise(promise, {
       loading: "Loading...",
       success: (data) => {
+        dispatch(setUserData(data));
+        setCookie("token", data?.token, { path: "/" });
         handleRedirect(data?.role);
         return `Login successful! Role: ${data.role}`;
       },
@@ -55,14 +71,19 @@ const Login = () => {
               required
             />
           </div>
-          <div className="input">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <div>
+            <div className="input">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+              />
+            </div>
+            <div>
+              <progress value={passwordStrength} max="4" />
+            </div>
           </div>
         </div>
         <div className="forgot-password">

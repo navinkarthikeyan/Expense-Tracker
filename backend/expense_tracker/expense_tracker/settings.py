@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'users',
     'rest_framework.authtoken',
     'corsheaders',
@@ -57,7 +58,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'expense_tracker.urls'
-CORS_ALLOW_ALL_ORIGINS = True
+
 
 TEMPLATES = [
     {
@@ -137,6 +138,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -144,11 +146,13 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # React frontend
+    'http://localhost:5173',  
 ]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL=True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'expensetrackerganit@gmail.com'  # Replace with your Gmail address
+EMAIL_HOST_USER = 'expensetrackerganit@gmail.com'  
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')

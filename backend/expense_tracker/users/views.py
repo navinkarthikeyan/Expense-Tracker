@@ -14,7 +14,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import CustomUser
 from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 User = get_user_model()
@@ -27,13 +27,21 @@ class SomeAdminView(APIView):
     permission_classes = [IsAdmin]
     
     def get(self, request):
-        # Your logic here
         return Response({"message": "Admin access granted"}, status=status.HTTP_200_OK)
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
+
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    refresh['user_id'] = user.pk
+    refresh['email'] = user.email
+    refresh['role'] = user.role
+    return str(refresh.access_token)
+
 
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
@@ -43,13 +51,16 @@ class LoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
+        # token, created = Token.objects.get_or_create(user=user)
+        token = get_tokens_for_user(user)
+        response = Response({
+            'token': token,
             'user_id': user.pk,
             'email': user.email,
             'role': user.role,
         })
+        # response.set_cookie('token', token, max_age=3600*24*7, secure=False, httponly=False, samesite='None')
+        return response 
 
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -99,3 +110,4 @@ class PasswordResetConfirmView(APIView):
             return Response({'message': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid token or user ID.'}, status=status.HTTP_400_BAD_REQUEST)
+
