@@ -1,15 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { loginUser } from "../../../api";
 // import Button from "@mui/material/Button";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../../../redux/user/slice";
 import { useCookies } from "react-cookie";
 import zxcvbn from "zxcvbn";
 
 const Login = () => {
+  const userData = useSelector((state) => state.user.userData);
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [username, setUsername] = useState("");
@@ -53,6 +55,12 @@ const Login = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      handleRedirect(userData?.role);
+    }
+  }, [location?.pathname, userData?.role]);
 
   return (
     <div className="container">

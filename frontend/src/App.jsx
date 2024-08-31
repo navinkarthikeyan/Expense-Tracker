@@ -7,6 +7,7 @@ import PasswordResetRequest from "./views/auth/reset/request";
 import PasswordResetConfirm from "./views/auth/reset/confirm";
 import Home from "./views/home";
 import Dashboard from "./views/dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -19,8 +20,23 @@ function App() {
           path="/reset/confirm/:uidb64/:token"
           element={<PasswordResetConfirm />}
         />
-        <Route path="/home" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

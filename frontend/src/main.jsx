@@ -22,13 +22,19 @@ const RootComponent = () => {
   const [cookies] = useCookies(["token"]);
 
   useEffect(() => {
-    console.log(cookies);
     const token = cookies.token;
     if (token) {
       const userData = jwtDecode(token);
+      console.log(userData);
       dispatch(setUserData(userData));
+    } else {
+      dispatch(
+        setUserData({
+          isAuthenticated: false,
+        })
+      );
     }
-  }, [cookies, dispatch]);
+  }, [cookies]);
 
   return <App />;
 };
