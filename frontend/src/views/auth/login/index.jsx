@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../../../redux/user/slice";
 import { useCookies } from "react-cookie";
-import zxcvbn from "zxcvbn";
 
 const Login = () => {
   const userData = useSelector((state) => state.user.userData);
@@ -16,14 +15,6 @@ const Login = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordStrength, setPasswordStrength] = useState(0);
-
-  const handlePasswordChange = (e) => {
-    const newPassword = e.target.value;
-    const strength = zxcvbn(newPassword).score;
-    setPassword(newPassword);
-    setPasswordStrength(strength);
-  };
 
   const handleRedirect = (role) => {
     switch (role) {
@@ -63,7 +54,7 @@ const Login = () => {
   }, [location?.pathname, userData?.role]);
 
   return (
-    <div className="container">
+    <div className="login-container">
       <form onSubmit={handleSubmit}>
         <div className="header">
           <div className="text">Login</div>
@@ -79,19 +70,14 @@ const Login = () => {
               required
             />
           </div>
-          <div>
-            <div className="input">
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={handlePasswordChange}
-                required
-              />
-            </div>
-            <div>
-              <progress value={passwordStrength} max="4" />
-            </div>
+          <div className="input">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
         </div>
         <div className="forgot-password">
@@ -101,14 +87,14 @@ const Login = () => {
         </div>
         <div className="submit-container">
           <div>
-            <button className="submit">
-              <Link className="signup" to="/register">
-                Register
-              </Link>
-            </button>
+            <button className="submit">Login</button>
           </div>
           {/* <Button variant="contained">Login</Button> */}
-          <button className="submit">Login</button>
+          <button className="submit">
+            <Link className="signup" to="/register">
+              Register
+            </Link>
+          </button>
         </div>
       </form>
     </div>

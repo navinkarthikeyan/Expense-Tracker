@@ -18,11 +18,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return attrs
 
+        # if User.objects.filter(username=attrs['username']).exists():
+        #     raise serializers.ValidationError({"username": "Username Already Taken"})
+        # return attrs  #return attrs
+
+        # if User.objects.filter(email=attrs['email']).exists():
+        #     raise serializers.ValidationError({"email": "Email already registered."})
+            
+    
     def create(self, validated_data):
         user = User.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
-            role=validated_data.get('role', 'user')        #edit
+            role=validated_data.get('role', 'user')        
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -31,7 +39,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
-    role = serializers.CharField(read_only=True)     #edit
+    role = serializers.CharField(read_only=True)     
 
     def validate(self, attrs):
         username = attrs.get('username')

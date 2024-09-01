@@ -40,7 +40,7 @@ const PasswordResetRequest = () => {
           </div>
         </div>
         <div className="newsubmit">
-          <button className="resetsubmit" type="submit">
+          <button className="submit" type="submit">
             Send Request
           </button>
         </div>

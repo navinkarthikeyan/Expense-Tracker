@@ -41,7 +41,7 @@ const RootComponent = () => {
 
 createRoot(document.getElementById("root")).render(
   <ThemeProvider theme={theme}>
-    <Toaster position="top-right" richColors />
+    <Toaster position="top-right" richColors closeButton />
     <Provider store={store}>
       <RootComponent />
     </Provider>

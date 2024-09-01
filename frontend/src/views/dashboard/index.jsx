@@ -1,8 +1,8 @@
-import React from "react";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { clearUserData } from "../../redux/user/slice";
 import { Link } from "react-router-dom";
+import Sidebar from "../sidebar/Sidebar";
 
 const index = () => {
   const dispatch = useDispatch();
