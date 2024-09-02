@@ -2,6 +2,20 @@ import { registerUser } from "../../../api";
 import { useState } from "react";
 import { toast } from "sonner";
 import zxcvbn from "zxcvbn";
+import Container from "../components/Container";
+import ActionButton from "../components/ActionButton";
+import {
+  Box,
+  Input,
+  Link,
+  Typography,
+  LinearProgress,
+  IconButton,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -9,13 +23,15 @@ export default function Register() {
   const [password2, setPassword2] = useState("");
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role] = useState("user");
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
     const strength = zxcvbn(newPassword).score;
     setPassword(newPassword);
-    setPasswordStrength(strength);
+    setPasswordStrength((strength * 100) / 4);
   };
 
   const handlePassword2Change = (e) => {
@@ -26,7 +42,7 @@ export default function Register() {
     e.preventDefault();
 
     if (password !== password2) {
-      toast.error("Passwords does not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
@@ -49,65 +65,96 @@ export default function Register() {
     });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   return (
-    <div className="container">
-      <form onSubmit={handleSubmit}>
-        <div className="header">
-          <div className="text">Register</div>
-          <div className="underline"></div>
-        </div>
-        <div className="inputs">
-          <div className="input">
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-          </div>
-
-          <div className="input">
-            <input
-              type="password"
-              placeholder="Password again"
-              value={password2}
-              onChange={handlePassword2Change}
-              required
-            />
-          </div>
-          <div className="passwordstrength">
-            <div>Password Strength</div>
-            <div className="bar">
-              <progress value={passwordStrength} max="4" />
-            </div>
-          </div>
-
-          <div className="input">
-            <input
-              type="text"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="submit-container">
-          <button type="submit" className="submit">
-            Submit
-          </button>
-        </div>
-      </form>
-    </div>
+    <Container>
+      <Typography variant="h5">Welcome Aboard!</Typography>
+      <Typography variant="h6" sx={{ marginBottom: "16px" }}>
+        Register to continue...
+      </Typography>
+      <Box
+        component="form"
+        sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
+        autoComplete="off"
+        onSubmit={handleSubmit}
+      >
+        <Input
+          size="medium"
+          variant="standard"
+          label="Username"
+          type="username"
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          value={username}
+        />
+        <FormControl variant="standard">
+          <InputLabel htmlFor="standard-adornment-password">
+            Password
+          </InputLabel>
+          <Input
+            size="medium"
+            type={showPassword ? "text" : "password"}
+            onChange={handlePasswordChange}
+            required
+            value={password}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <FormControl variant="standard">
+          <InputLabel htmlFor="standard-adornment-password2">
+            Password again
+          </InputLabel>
+          <Input
+            size="medium"
+            type={showConfirmPassword ? "text" : "password"}
+            onChange={handlePassword2Change}
+            required
+            value={password2}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={toggleConfirmPasswordVisibility}
+                  edge="end"
+                >
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <LinearProgress variant="determinate" value={passwordStrength} />
+        <Input
+          size="medium"
+          variant="standard"
+          label="Email"
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          value={email}
+        />
+        <ActionButton sx={{ mt: "16px" }} type="submit">
+          Register
+        </ActionButton>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: "4px" }}>
+          Already have an account?
+          <Link href="/" sx={{ cursor: "pointer" }}>
+            Login
+          </Link>{" "}
+        </Box>
+      </Box>
+    </Container>
   );
 }

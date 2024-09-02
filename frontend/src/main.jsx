@@ -1,8 +1,5 @@
 import "./index.css";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
+import '@fontsource-variable/inter';
 
 import { createRoot } from "react-dom/client";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -14,8 +11,19 @@ import { useCookies } from "react-cookie";
 import { setUserData } from "./redux/user/slice";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect } from "react";
+import CssBaseline from "@mui/material/CssBaseline";
 
-const theme = createTheme({});
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#0f0f0f",
+
+    },
+    secondary: {
+      main: "#f6f6f6",
+    },
+  },
+});
 
 const RootComponent = () => {
   const dispatch = useDispatch();
@@ -41,6 +49,7 @@ const RootComponent = () => {
 
 createRoot(document.getElementById("root")).render(
   <ThemeProvider theme={theme}>
+    <CssBaseline/>
     <Toaster position="top-right" richColors closeButton />
     <Provider store={store}>
       <RootComponent />

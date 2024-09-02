@@ -120,3 +120,10 @@ class ExpenseListView(generics.ListAPIView):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
 
+class ExpenseUpdateView(generics.UpdateAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+
+class ExpenseDeleteView(generics.DestroyAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer

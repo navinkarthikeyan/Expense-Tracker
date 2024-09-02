@@ -1,7 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import Container from "../../components/Container";
+import ActionButton from "../../components/ActionButton";
 import "../../../../styles/passwordreset.css";
 import { toast } from "sonner";
+import { Box, Button, Input, Link, Typography } from "@mui/material";
 
 const PasswordResetRequest = () => {
   const [email, setEmail] = useState("");
@@ -24,28 +27,33 @@ const PasswordResetRequest = () => {
   };
 
   return (
-    <div className="resetcontainer">
-      <div className="title">Password Reset Request</div>
-      <form onSubmit={handleSubmit}>
-        <div className="overall">
-          <div className="input">
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="newsubmit">
-          <button className="submit" type="submit">
+    <Container>
+           <Typography variant="h5" sx={{ textAlign: "center", mb: "16px" }}>
+
+        Password Reset Request Form
+      </Typography>
+      <Box
+               sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
+
+        as="form"
+        onSubmit={handleSubmit}
+      >
+        <Input
+          size="medium"
+          variant="standard"
+          label="Enter Email"
+          type="email"
+          required
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+        />
+        <ActionButton sx={{ mt: "16px" }} type="submit">
+          <Box sx={{ display: "flex", justifyContent: "center", gap: "4px" }}>
             Send Request
-          </button>
-        </div>
-      </form>
-    </div>
+          </Box>
+        </ActionButton>
+      </Box>
+    </Container>
   );
 };
 

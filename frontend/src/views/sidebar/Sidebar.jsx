@@ -46,8 +46,8 @@ const Sidebar = () => {
           display: "flex",
           alignItems: "center",
           flexDirection: "column",
+          flexGrow:1,
         }}
-        className="menu-items"
       >
         <Box
           sx={{
@@ -71,10 +71,7 @@ const Sidebar = () => {
           Expenses
         </Box>
       </Box>
-      <Box
-        sx={{ display: "flex", justifyContent: "center" }}
-        className="logout"
-      >
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Button
           onClick={handleLogout}
           sx={{

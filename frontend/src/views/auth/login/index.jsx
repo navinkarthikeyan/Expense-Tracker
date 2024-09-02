@@ -1,19 +1,36 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { loginUser } from "../../../api";
+import { setUserData } from "../../../redux/user/slice";
+import Container from "../components/Container";
+import ActionButton from "../components/ActionButton";
+
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserData } from "../../../redux/user/slice";
 import { useCookies } from "react-cookie";
+import {
+  Box,
+  Button,
+  TextField,
+  Link,
+  Typography,
+  IconButton,
+  Input,
+  InputAdornment,
+  FormControl,
+  InputLabel
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login = () => {
   const userData = useSelector((state) => state.user.userData);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
+  const [cookies, setCookie] = useCookies(["token"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRedirect = (role) => {
     switch (role) {
@@ -29,7 +46,7 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const promise = loginUser({ username, password });
     toast.promise(promise, {
@@ -41,7 +58,8 @@ const Login = () => {
         return `Login successful! Role: ${data.role}`;
       },
       error: (err) => {
-        return err.non_field_errors || "Login failed";
+        console.log(err);
+        return "Login failed";
       },
     });
   };
@@ -52,53 +70,72 @@ const Login = () => {
     }
   }, [location?.pathname, userData?.role]);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
-    <div className="main-container">
-      <div className="header-title">Expense Tracker Application</div>
-      <div className="login-container">
-        <form onSubmit={handleSubmit}>
-          <div className="header">
-            <div className="text">Login</div>
-            <div className="underline"></div>
-          </div>
-          <div className="inputs">
-            <div className="input">
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="input">
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="forgot-password">
-            <Link to="/reset/request">
-              <span>Forgot Password ?</span>
-            </Link>
-          </div>
-          <div className="submit-container">
-            <div>
-              <button className="submit">Login</button>
-            </div>
-            <button className="submit">
-              <Link className="signup" to="/register">
-                Register
-              </Link>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Container>
+      <Typography variant="h5">Welcome Back!</Typography>
+      <Typography variant="h6" sx={{ marginBottom: "16px" }}>
+        Login to continue...
+      </Typography>
+      <Box
+        component="form"
+        sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
+        autoComplete="off"
+        onSubmit={handleSubmit}
+      >
+        <TextField
+          size="medium"
+          variant="standard"
+          label="Username"
+          required
+          onChange={(e) => setUsername(e.target.value)}
+          value={username}
+        />
+        <FormControl variant="standard">
+          <InputLabel htmlFor="standard-adornment-password">
+            Password
+          </InputLabel>
+          <Input
+            size="medium"
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <Link
+          href="/reset/request"
+          underline="hover"
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            mt: "8px",
+          }}
+        >
+          Forgot Password?
+        </Link>
+        <ActionButton sx={{ mt: "16px" }} type="submit">
+          Login
+        </ActionButton>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: "4px" }}>
+          Don't have an account?
+          <Link href="/register" sx={{ cursor: "pointer" }} underline="hover">
+            Signup
+          </Link>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
