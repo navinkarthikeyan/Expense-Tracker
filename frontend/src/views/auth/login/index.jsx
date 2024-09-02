@@ -1,7 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { loginUser } from "../../../api";
-// import Button from "@mui/material/Button";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../../../redux/user/slice";
@@ -54,49 +53,51 @@ const Login = () => {
   }, [location?.pathname, userData?.role]);
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit}>
-        <div className="header">
-          <div className="text">Login</div>
-          <div className="underline"></div>
-        </div>
-        <div className="inputs">
-          <div className="input">
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+    <div className="main-container">
+      <div className="header-title">Expense Tracker Application</div>
+      <div className="login-container">
+        <form onSubmit={handleSubmit}>
+          <div className="header">
+            <div className="text">Login</div>
+            <div className="underline"></div>
           </div>
-          <div className="input">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <div className="inputs">
+            <div className="input">
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className="input">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
-        </div>
-        <div className="forgot-password">
-          <Link to="/reset/request">
-            <span>Forgot Password ?</span>
-          </Link>
-        </div>
-        <div className="submit-container">
-          <div>
-            <button className="submit">Login</button>
-          </div>
-          {/* <Button variant="contained">Login</Button> */}
-          <button className="submit">
-            <Link className="signup" to="/register">
-              Register
+          <div className="forgot-password">
+            <Link to="/reset/request">
+              <span>Forgot Password ?</span>
             </Link>
-          </button>
-        </div>
-      </form>
+          </div>
+          <div className="submit-container">
+            <div>
+              <button className="submit">Login</button>
+            </div>
+            <button className="submit">
+              <Link className="signup" to="/register">
+                Register
+              </Link>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

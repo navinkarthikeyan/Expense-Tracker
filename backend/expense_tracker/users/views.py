@@ -12,8 +12,8 @@ from django.template.loader import render_to_string
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
-from .models import CustomUser
-from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer
+from .models import CustomUser, Expense
+from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, ExpenseSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -110,4 +110,13 @@ class PasswordResetConfirmView(APIView):
             return Response({'message': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid token or user ID.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class ExpenseCreateView(generics.CreateAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+
+
+class ExpenseListView(generics.ListAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
 

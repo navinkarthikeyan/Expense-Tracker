@@ -103,8 +103,21 @@
   display: flex;
   flex-direction: column;
   margin: auto;
-  margin-top: 150px;
+  margin-top: 70px;
   background: white;
   padding-bottom: 30px;
   width: 600px;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+.header-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 30px;
 }

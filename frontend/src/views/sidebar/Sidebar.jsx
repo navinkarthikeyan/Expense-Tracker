@@ -41,7 +41,36 @@ const Sidebar = () => {
         <Box>Hello, User</Box>
         <Box sx={{}}>helo</Box>
       </Box>
-      <Box className="menu-items">box2</Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+        className="menu-items"
+      >
+        <Box
+          sx={{
+            display: "flex",
+            m: "20px",
+            transition: "background-color 0.3s ease",
+            "&:hover": {
+              backgroundColor: "lightgray", // Change to any color you prefer for highlight
+              cursor: "pointer", // Changes cursor to pointer on hover
+            },
+          }}
+        >
+          Dashboard
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            m: "20px",
+          }}
+        >
+          Expenses
+        </Box>
+      </Box>
       <Box
         sx={{ display: "flex", justifyContent: "center" }}
         className="logout"
