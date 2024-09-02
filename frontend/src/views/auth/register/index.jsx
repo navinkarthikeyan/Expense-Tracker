@@ -14,6 +14,7 @@ import {
   InputAdornment,
   FormControl,
   InputLabel,
+  TextField,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -85,7 +86,7 @@ export default function Register() {
         autoComplete="off"
         onSubmit={handleSubmit}
       >
-        <Input
+        <TextField
           size="medium"
           variant="standard"
           label="Username"
@@ -136,7 +137,7 @@ export default function Register() {
           />
         </FormControl>
         <LinearProgress variant="determinate" value={passwordStrength} />
-        <Input
+        <TextField
           size="medium"
           variant="standard"
           label="Email"
