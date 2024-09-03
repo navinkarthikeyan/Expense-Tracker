@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser,PermissionsMixin
 from django.db import models
 from .managers import CustomUserManager
+from django.conf import settings
+
 
 
 class CustomUser(AbstractUser,PermissionsMixin):
@@ -24,6 +26,7 @@ class CustomUser(AbstractUser,PermissionsMixin):
         return self.username
 
 class Expense(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='expenses')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=255)
     date = models.DateField()

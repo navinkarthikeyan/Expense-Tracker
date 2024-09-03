@@ -1,4 +1,4 @@
-from rest_framework import generics, status                         
+from rest_framework import generics, status, permissions                        
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
@@ -112,18 +112,33 @@ class PasswordResetConfirmView(APIView):
             return Response({'error': 'Invalid token or user ID.'}, status=status.HTTP_400_BAD_REQUEST)
         
 class ExpenseCreateView(generics.CreateAPIView):
-    queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ExpenseListView(generics.ListAPIView):
-    queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user)
 
 class ExpenseUpdateView(generics.UpdateAPIView):
-    queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user)
 
 class ExpenseDeleteView(generics.DestroyAPIView):
-    queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Expense.objects.filter(user=self.request.user)

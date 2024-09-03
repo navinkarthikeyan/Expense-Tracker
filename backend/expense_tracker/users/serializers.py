@@ -64,4 +64,10 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expense
-        fields = ['id', 'amount', 'category', 'date']
+        fields = ['id','user', 'amount', 'category', 'date']
+        read_only_fields = ['id', 'user']
+        
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data.pop('user', None)
+        return Expense.objects.create(user=user, **validated_data)
