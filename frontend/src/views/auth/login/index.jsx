@@ -18,7 +18,7 @@ import {
   Input,
   InputAdornment,
   FormControl,
-  InputLabel
+  InputLabel,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -54,6 +54,7 @@ const Login = () => {
       success: (data) => {
         dispatch(setUserData(data));
         setCookie("token", data?.token, { path: "/" });
+        localStorage.setItem("token", data?.token);
         handleRedirect(data?.role);
         return `Login successful! Role: ${data.role}`;
       },

@@ -1,5 +1,3 @@
-import { useState } from "react";
-import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./views/auth/register";
 import Login from "./views/auth/login";
@@ -8,6 +6,7 @@ import PasswordResetConfirm from "./views/auth/reset/confirm";
 import Home from "./views/home";
 import Dashboard from "./views/dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import LogExpense from "./views/home/components/LogExpense";
 
 function App() {
   return (
@@ -20,12 +19,19 @@ function App() {
           path="/reset/confirm/:uidb64/:token"
           element={<PasswordResetConfirm />}
         />
-
         <Route
           path="/home"
           element={
             <ProtectedRoute requiredRole="user">
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/home/log-expense"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <LogExpense />
             </ProtectedRoute>
           }
         />

@@ -4,16 +4,23 @@ import { useCookies } from "react-cookie";
 import { useDispatch } from "react-redux";
 import { clearUserData } from "../../redux/user/slice";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleLogout = () => {
     console.log("logout");
     removeCookie("token");
     dispatch(clearUserData());
     toast.success("logout successful");
+  };
+
+  const handleLogExpenseClick = () => {
+    console.log("hello");
+    navigate("/home/log-expense"); // Navigate to LogExpense route
   };
 
   return (
@@ -33,20 +40,9 @@ const Sidebar = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-        className="profile"
-      >
-        <Box>Hello, User</Box>
-        <Box sx={{}}>helo</Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
           alignItems: "center",
           flexDirection: "column",
-          flexGrow:1,
+          flexGrow: 1,
         }}
       >
         <Box
@@ -55,20 +51,27 @@ const Sidebar = () => {
             m: "20px",
             transition: "background-color 0.3s ease",
             "&:hover": {
-              backgroundColor: "lightgray", // Change to any color you prefer for highlight
-              cursor: "pointer", // Changes cursor to pointer on hover
+              backgroundColor: "darkgray",
+              cursor: "pointer",
             },
           }}
         >
-          Dashboard
+          View Expenses
         </Box>
         <Box
           sx={{
             display: "flex",
             m: "20px",
+            cursor: "pointer",
+            color: "white",
+            transition: "background-color 0.3s ease",
+            "&:hover": {
+              backgroundColor: "darkgray",
+            },
           }}
+          onClick={handleLogExpenseClick} // Handle click event
         >
-          Expenses
+          Log Expense
         </Box>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
