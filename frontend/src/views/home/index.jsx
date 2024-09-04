@@ -17,7 +17,8 @@ import Sidebar from "../sidebar/Sidebar";
 import useExpenses from "../../api/useExpenses";
 
 const Home = () => {
-  const { expenses, error, handleDeleteExpense, handleUpdateExpense } = useExpenses();
+  const { expenses, error, handleDeleteExpense, handleUpdateExpense } =
+    useExpenses();
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [updatedExpense, setUpdatedExpense] = useState({
@@ -26,6 +27,9 @@ const Home = () => {
     amount: "",
     date: "",
   });
+
+  const [searchCategory, setSearchCategory] = useState("");
+  const [searchDate, setSearchDate] = useState("");
 
   const handleOpenUpdateDialog = (expense) => {
     setSelectedExpense(expense);
@@ -43,9 +47,17 @@ const Home = () => {
     handleCloseUpdateDialog();
   };
 
+  const filteredExpenses = expenses.filter((expense) => {
+    const matchesCategory = expense.category
+      .toLowerCase()
+      .includes(searchCategory.toLowerCase());
+    const matchesDate = expense.date.includes(searchDate);
+    return matchesCategory && matchesDate;
+  });
+
   const columns = [
     { field: "category", headerName: "Category", flex: 1, editable: false },
-    { field: "amount", headerName: "Amount", flex: 1, editable: false },
+    { field: "amount", headerName: "Amount ₹", flex: 1, editable: false },
     { field: "date", headerName: "Date", flex: 1, editable: false },
     {
       field: "actions",
@@ -104,6 +116,27 @@ const Home = () => {
           Expense List
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
+
+        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+          <TextField
+            label="Search by Category"
+            variant="outlined"
+            fullWidth
+            value={searchCategory}
+            onChange={(e) => setSearchCategory(e.target.value)}
+            sx={{ backgroundColor: "white", borderRadius: "4px" }}
+          />
+          <TextField
+            label="Search by Date"
+            variant="outlined"
+            type="date"
+            fullWidth
+            value={searchDate}
+            onChange={(e) => setSearchDate(e.target.value)}
+            sx={{ backgroundColor: "white", borderRadius: "4px" }}
+          />
+        </Box>
+
         <Box
           sx={{
             height: 400,
@@ -122,12 +155,20 @@ const Home = () => {
           }}
         >
           <DataGrid
-            rows={expenses}
+            rows={filteredExpenses}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5]}
             disableSelectionOnClick
             getRowId={(row) => row.id}
+            sx={{
+              "& .MuiDataGrid-columnHeader": {
+                backgroundColor: "#333", // Set header background color
+                color: "white", // Set header text color to white
+                display: "flex",
+                justifyContent: "space-between",
+              },
+            }}
           />
         </Box>
 
