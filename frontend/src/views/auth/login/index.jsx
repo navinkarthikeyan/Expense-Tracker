@@ -3,6 +3,7 @@ import { loginUser } from "../../../api";
 import { setUserData } from "../../../redux/user/slice";
 import Container from "../components/Container";
 import ActionButton from "../components/ActionButton";
+import Header from "../components/Header";  // Import Header component
 
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,10 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import {
   Box,
-  Button,
   TextField,
   Link,
-  Typography,
   IconButton,
   Input,
   InputAdornment,
@@ -34,15 +33,12 @@ const Login = () => {
 
   const handleRedirect = (role) => {
     switch (role) {
-      case "admin": {
+      case "admin":
         return navigate("/dashboard");
-      }
-      case "user": {
+      case "user":
         return navigate("/home");
-      }
-      default: {
+      default:
         return;
-      }
     }
   };
 
@@ -77,10 +73,7 @@ const Login = () => {
 
   return (
     <Container>
-      <Typography variant="h5">Welcome Back!</Typography>
-      <Typography variant="h6" sx={{ marginBottom: "16px" }}>
-        Login to continue...
-      </Typography>
+      <Header title="Welcome Back!" subtitle="Login to continue..." />
       <Box
         component="form"
         sx={{ display: "flex", flexDirection: "column", gap: "8px" }}

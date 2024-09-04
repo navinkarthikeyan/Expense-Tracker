@@ -1,9 +1,11 @@
+// src/views/auth/register/Register.jsx
+import React, { useState } from "react";
 import { registerUser } from "../../../api";
-import { useState } from "react";
 import { toast } from "sonner";
 import zxcvbn from "zxcvbn";
 import Container from "../components/Container";
 import ActionButton from "../components/ActionButton";
+import Header from "../components/Header";
 import {
   Box,
   Input,
@@ -18,7 +20,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export default function Register() {
+const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -60,7 +62,7 @@ export default function Register() {
 
     toast.promise(promise, {
       loading: "Loading...",
-      success: `Registration successful`,
+      success: "Registration successful",
       error: (err) => {
         return Object.values(err)
           .map((e) => e)
@@ -79,10 +81,7 @@ export default function Register() {
 
   return (
     <Container>
-      <Typography variant="h5">Welcome Aboard!</Typography>
-      <Typography variant="h6" sx={{ marginBottom: "16px" }}>
-        Register to continue...
-      </Typography>
+      <Header title="Welcome Aboard!" subtitle="Register to continue..." />
       <Box
         component="form"
         sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
@@ -156,9 +155,11 @@ export default function Register() {
           Already have an account?
           <Link href="/" sx={{ cursor: "pointer" }}>
             Login
-          </Link>{" "}
+          </Link>
         </Box>
       </Box>
     </Container>
   );
-}
+};
+
+export default Register;

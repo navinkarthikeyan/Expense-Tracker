@@ -168,9 +168,13 @@ const Home = () => {
                     edge="end"
                     aria-label="edit"
                     onClick={() => handleOpenUpdateDialog(expense)}
-                    sx={{ marginLeft: "10px" }}
+                    sx={{
+                      marginLeft: "10px",
+                      background: "white",
+                      padding: "4px",
+                    }}
                   >
-                    <EditIcon color="primary" />
+                    <EditIcon fontSize="small" sx={{ color: "black" }} />
                   </IconButton>
                 </>
               }
@@ -220,9 +224,6 @@ const Home = () => {
               onChange={(e) =>
                 setUpdatedExpense({ ...updatedExpense, date: e.target.value })
               }
-              // InputLabelProps={{
-              //   shrink: true,
-              // }}
             />
           </DialogContent>
           <DialogActions>
