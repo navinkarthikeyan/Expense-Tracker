@@ -7,14 +7,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  List,
-  ListItem,
-  ListItemText,
   IconButton,
   Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { DataGrid } from "@mui/x-data-grid";
 import Sidebar from "../sidebar/Sidebar";
 import useExpenses from "../../api/useExpenses";
 
@@ -45,6 +43,41 @@ const Home = () => {
     handleCloseUpdateDialog();
   };
 
+  const columns = [
+    { field: "category", headerName: "Category", flex: 1, editable: false },
+    { field: "amount", headerName: "Amount", flex: 1, editable: false },
+    { field: "date", headerName: "Date", flex: 1, editable: false },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton
+            edge="end"
+            aria-label="delete"
+            onClick={() => handleDeleteExpense(params.row.id)}
+          >
+            <DeleteIcon color="error" />
+          </IconButton>
+          <IconButton
+            edge="end"
+            aria-label="edit"
+            onClick={() => handleOpenUpdateDialog(params.row)}
+            sx={{
+              marginLeft: "10px",
+              background: "white",
+              padding: "4px",
+            }}
+          >
+            <EditIcon fontSize="small" sx={{ color: "black" }} />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
+
   return (
     <Box
       sx={{
@@ -71,44 +104,32 @@ const Home = () => {
           Expense List
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
-        <List>
-          {expenses.map((expense) => (
-            <ListItem
-              key={expense.id}
-              sx={{ backgroundColor: "#1a1a1a", mb: 1, borderRadius: "4px" }}
-              secondaryAction={
-                <>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleDeleteExpense(expense.id)}
-                  >
-                    <DeleteIcon color="error" />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    aria-label="edit"
-                    onClick={() => handleOpenUpdateDialog(expense)}
-                    sx={{
-                      marginLeft: "10px",
-                      background: "white",
-                      padding: "4px",
-                    }}
-                  >
-                    <EditIcon fontSize="small" sx={{ color: "black" }} />
-                  </IconButton>
-                </>
-              }
-            >
-              <ListItemText
-                primary={`${expense.category}: ₹${expense.amount}`}
-                secondary={`Date: ${expense.date}`}
-                primaryTypographyProps={{ color: "white" }}
-                secondaryTypographyProps={{ color: "gray" }}
-              />
-            </ListItem>
-          ))}
-        </List>
+        <Box
+          sx={{
+            height: 400,
+            width: "100%",
+            backgroundColor: "#1a1a1a",
+            borderRadius: "4px",
+            "& .MuiDataGrid-cell": {
+              color: "white",
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "#333",
+            },
+            "& .MuiDataGrid-footerContainer": {
+              backgroundColor: "#333",
+            },
+          }}
+        >
+          <DataGrid
+            rows={expenses}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            disableSelectionOnClick
+            getRowId={(row) => row.id}
+          />
+        </Box>
 
         <Dialog open={openUpdateDialog} onClose={handleCloseUpdateDialog}>
           <DialogTitle>Update Expense</DialogTitle>
