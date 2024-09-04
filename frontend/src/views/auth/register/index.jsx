@@ -46,7 +46,10 @@ export default function Register() {
       toast.error("Passwords do not match.");
       return;
     }
-
+    if (passwordStrength < 4) {
+      toast.error("Password is too weak");
+      return;
+    }
     const promise = registerUser({
       username,
       password,

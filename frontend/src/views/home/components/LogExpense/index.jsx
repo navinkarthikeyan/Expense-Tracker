@@ -124,7 +124,7 @@ const ExpenseForm = () => {
             }}
           />
           <TextField
-            label="Date"
+            label=""
             type="date"
             fullWidth
             value={date}

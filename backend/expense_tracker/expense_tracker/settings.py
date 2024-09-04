@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'users',
     'rest_framework.authtoken',
     'corsheaders',
+    'drf_api_logger',
 ]
 
 MIDDLEWARE = [
@@ -55,10 +56,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
 ]
 
 ROOT_URLCONF = 'expense_tracker.urls'
-
+DRF_API_LOGGER_DATABASE = True
 
 TEMPLATES = [
     {

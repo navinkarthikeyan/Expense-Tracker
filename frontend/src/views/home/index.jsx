@@ -220,9 +220,9 @@ const Home = () => {
               onChange={(e) =>
                 setUpdatedExpense({ ...updatedExpense, date: e.target.value })
               }
-              InputLabelProps={{
-                shrink: true,
-              }}
+              // InputLabelProps={{
+              //   shrink: true,
+              // }}
             />
           </DialogContent>
           <DialogActions>

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
 
   const handleLogout = () => {
     console.log("logout");
@@ -20,7 +20,7 @@ const Sidebar = () => {
 
   const handleLogExpenseClick = () => {
     console.log("hello");
-    navigate("/home/log-expense"); // Navigate to LogExpense route
+    navigate("/home/log-expense"); 
   };
 
   return (
