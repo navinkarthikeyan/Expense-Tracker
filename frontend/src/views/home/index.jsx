@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -15,14 +15,11 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useCookies } from "react-cookie";
-import axios from "axios";
 import Sidebar from "../sidebar/Sidebar";
+import useExpenses from "../../api/useExpenses";
 
 const Home = () => {
-  const [expenses, setExpenses] = useState([]);
-  const [error, setError] = useState("");
-  const [cookies] = useCookies(["token"]);
+  const { expenses, error, handleDeleteExpense, handleUpdateExpense } = useExpenses();
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [updatedExpense, setUpdatedExpense] = useState({
@@ -31,60 +28,6 @@ const Home = () => {
     amount: "",
     date: "",
   });
-
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("User not authenticated.");
-          return;
-        }
-
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/users/expenses/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setExpenses(response.data);
-      } catch (err) {
-        setError("Failed to fetch expenses.");
-        console.error(err);
-      }
-    };
-
-    fetchExpenses();
-  }, []);
-
-  const handleDeleteExpense = async (expenseId) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("User not authenticated.");
-        return;
-      }
-
-      await axios.delete(
-        `http://127.0.0.1:8000/api/users/expenses/delete/${expenseId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setExpenses((prevExpenses) =>
-        prevExpenses.filter((expense) => expense.id !== expenseId)
-      );
-    } catch (err) {
-      setError("Failed to delete expense.");
-      console.error(err);
-    }
-  };
 
   const handleOpenUpdateDialog = (expense) => {
     setSelectedExpense(expense);
@@ -97,35 +40,9 @@ const Home = () => {
     setSelectedExpense(null);
   };
 
-  const handleUpdateExpense = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("User not authenticated.");
-        return;
-      }
-
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/users/expenses/update/${selectedExpense.id}/`,
-        updatedExpense,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setExpenses((prevExpenses) =>
-        prevExpenses.map((expense) =>
-          expense.id === response.data.id ? response.data : expense
-        )
-      );
-
-      handleCloseUpdateDialog();
-    } catch (err) {
-      setError("Failed to update expense.");
-      console.error(err);
-    }
+  const handleUpdateClick = () => {
+    handleUpdateExpense(updatedExpense);
+    handleCloseUpdateDialog();
   };
 
   return (
@@ -146,7 +63,11 @@ const Home = () => {
           color: "white",
         }}
       >
-        <Typography variant="h4" gutterBottom>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
           Expense List
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
@@ -230,7 +151,7 @@ const Home = () => {
             <Button onClick={handleCloseUpdateDialog} color="primary">
               Cancel
             </Button>
-            <Button onClick={handleUpdateExpense} color="primary">
+            <Button onClick={handleUpdateClick} color="primary">
               Update
             </Button>
           </DialogActions>

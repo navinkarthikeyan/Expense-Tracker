@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Sidebar from "../../../sidebar/Sidebar";
+import { toast } from "sonner";
 
 const ExpenseForm = () => {
   const [amount, setAmount] = useState("");
@@ -34,7 +35,8 @@ const ExpenseForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
+        toast.success("Expense Logged")
       );
 
       console.log(response.data);

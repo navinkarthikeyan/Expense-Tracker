@@ -1,5 +1,6 @@
-import React from "react";
-import { Box, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Button, Drawer, IconButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
 import { useDispatch } from "react-redux";
 import { clearUserData } from "../../redux/user/slice";
@@ -10,86 +11,107 @@ const Sidebar = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleLogout = () => {
     console.log("logout");
     removeCookie("token");
     dispatch(clearUserData());
     toast.success("logout successful");
+    // navigate("/");
   };
 
   const handleLogExpenseClick = () => {
-    console.log("hello");
     navigate("/home/log-expense");
   };
 
+  const handleViewExpenseClick = () => {
+    navigate("/home");
+  };
+
+  const toggleDrawer = (open) => () => {
+    setIsDrawerOpen(open);
+  };
   return (
-    <Box
-      className="sidebar"
-      sx={{
-        display: "flex",
-        p: "40px 16px",
-        m: "15px",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        minWidth: "300px",
-        backgroundColor: "#151516",
-        borderRadius: "40px",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          flexGrow: 1,
-        }}
+    <>
+      <IconButton
+        edge="start"
+        color="inherit"
+        aria-label="menu"
+        onClick={toggleDrawer(true)}
+        sx={{ position: "absolute", top: 16, left: 16 }}
       >
+        <MenuIcon />
+      </IconButton>
+      <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
         <Box
           sx={{
+            width: 250,
             display: "flex",
-            m: "20px",
-            transition: "background-color 0.3s ease",
-            "&:hover": {
-              backgroundColor: "darkgray",
-              cursor: "pointer",
-            },
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "100%",
+            p: 2,
+            backgroundColor: "#151516",
           }}
         >
-          View Expenses
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              flexGrow: 1,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                m: "20px",
+                transition: "background-color 0.3s ease",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "darkgray",
+                  cursor: "pointer",
+                },
+              }}
+              onClick={handleViewExpenseClick}
+            >
+              View Expenses
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                m: "20px",
+                cursor: "pointer",
+                color: "white",
+                transition: "background-color 0.3s ease",
+                "&:hover": {
+                  backgroundColor: "darkgray",
+                },
+              }}
+              onClick={handleLogExpenseClick}
+            >
+              Log Expense
+            </Box>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              onClick={handleLogout}
+              sx={{
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "30px",
+                fontWeight: "700",
+                width: "170px",
+                height: "60px",
+              }}
+            >
+              Logout
+            </Button>
+          </Box>
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            m: "20px",
-            cursor: "pointer",
-            color: "white",
-            transition: "background-color 0.3s ease",
-            "&:hover": {
-              backgroundColor: "darkgray",
-            },
-          }}
-          onClick={handleLogExpenseClick} 
-        >
-          Log Expense
-        </Box>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Button
-          onClick={handleLogout}
-          sx={{
-            backgroundColor: "white",
-            color: "black",
-            borderRadius: "30px",
-            fontWeight: "700",
-            width: "170px",
-            height: "60px",
-          }}
-        >
-          Logout
-        </Button>
-      </Box>
-    </Box>
+      </Drawer>
+    </>
   );
 };
 
