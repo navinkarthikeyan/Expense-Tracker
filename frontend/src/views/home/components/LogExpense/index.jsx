@@ -30,11 +30,14 @@ const ExpenseForm = () => {
     const fetchCategories = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users/categories/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/users/categories/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setCategories(response.data);
       } catch (err) {
         setError("Failed to fetch categories");
@@ -100,11 +103,14 @@ const ExpenseForm = () => {
         toast.success("Category added successfully");
       }
       setNewCategory("");
-      const response = await axios.get("http://127.0.0.1:8000/api/users/categories/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/users/categories/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setCategories(response.data); // Refresh categories
     } catch (err) {
       setError("Failed to manage category");
@@ -120,11 +126,14 @@ const ExpenseForm = () => {
   const handleDeleteCategory = async (categoryId) => {
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/users/categories/${categoryId}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `http://127.0.0.1:8000/api/users/categories/${categoryId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       toast.success("Category deleted successfully");
       setCategories(categories.filter((cat) => cat.id !== categoryId));
     } catch (err) {
@@ -178,7 +187,7 @@ const ExpenseForm = () => {
             }}
           />
           <TextField
-            label="Category"
+            label=""
             select
             fullWidth
             value={category}
@@ -232,7 +241,12 @@ const ExpenseForm = () => {
         </form>
 
         {/* Category Management Section */}
-        <Typography variant="h5" align="center" gutterBottom sx={{ marginTop: "20px" }}>
+        <Typography
+          variant="h5"
+          align="center"
+          gutterBottom
+          sx={{ marginTop: "20px" }}
+        >
           Manage Categories
         </Typography>
         <form onSubmit={handleAddCategory}>
@@ -263,35 +277,47 @@ const ExpenseForm = () => {
             {isEditing ? "Update Category" : "Add Category"}
           </Button>
         </form>
-        {categories.map((cat) => (
-          <Paper
-            key={cat.id}
-            sx={{
-              padding: "10px",
-              marginBottom: "10px",
-              display: "flex",
-              justifyContent: "space-between",
-              backgroundColor: "#333",
-              color: "white",
-            }}
-          >
-            <Typography>{cat.name}</Typography>
-            <div>
-              <IconButton
-                onClick={() => handleEditCategory(cat.id, cat.name)}
-                sx={{ color: "white" }}
-              >
-                <EditIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => handleDeleteCategory(cat.id)}
-                sx={{ color: "white" }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </div>
-          </Paper>
-        ))}
+
+        {/* Scrollable Category List */}
+        <Box
+          sx={{
+            maxHeight: "300px", // Adjust this height as needed
+            overflowY: "auto",
+            marginBottom: "20px",
+            border: "1px solid #444", // Optional: border to differentiate scrollable area
+            borderRadius: "4px",
+          }}
+        >
+          {categories.map((cat) => (
+            <Paper
+              key={cat.id}
+              sx={{
+                padding: "10px",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "space-between",
+                backgroundColor: "#333",
+                color: "white",
+              }}
+            >
+              <Typography>{cat.name}</Typography>
+              <div>
+                <IconButton
+                  onClick={() => handleEditCategory(cat.id, cat.name)}
+                  sx={{ color: "white" }}
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() => handleDeleteCategory(cat.id)}
+                  sx={{ color: "white" }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+            </Paper>
+          ))}
+        </Box>
       </Container>
     </Box>
   );

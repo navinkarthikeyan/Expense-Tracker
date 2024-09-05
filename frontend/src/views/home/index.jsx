@@ -127,7 +127,7 @@ const Home = () => {
             sx={{ backgroundColor: "white", borderRadius: "4px" }}
           />
           <TextField
-            label="Search by Date"
+            // label="Search by Date"
             variant="outlined"
             type="date"
             fullWidth
@@ -139,12 +139,13 @@ const Home = () => {
 
         <Box
           sx={{
-            height: 400,
+            height: "550px",
             width: "100%",
             backgroundColor: "#1a1a1a",
             borderRadius: "4px",
             "& .MuiDataGrid-cell": {
               color: "white",
+              borderRight: "1px solid #444",
             },
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "#333",
