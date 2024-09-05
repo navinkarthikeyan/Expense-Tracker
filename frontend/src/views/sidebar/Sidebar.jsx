@@ -18,7 +18,6 @@ const Sidebar = () => {
     removeCookie("token");
     dispatch(clearUserData());
     toast.success("logout successful");
-    // navigate("/");
   };
 
   const handleLogExpenseClick = () => {
@@ -32,6 +31,7 @@ const Sidebar = () => {
   const toggleDrawer = (open) => () => {
     setIsDrawerOpen(open);
   };
+
   return (
     <>
       <IconButton
@@ -65,12 +65,16 @@ const Sidebar = () => {
           >
             <Box
               sx={{
-                display: "flex",
-                m: "20px",
-                transition: "background-color 0.3s ease",
                 color: "white",
+                my: 2,
+                p: 2,
+                borderRadius: 1,
+                backgroundColor: "#2e2e2e",
+                transition: "background-color 0.3s ease",
+                width: "100%", // Ensure full width
+                textAlign: "center", // Center text
                 "&:hover": {
-                  backgroundColor: "darkgray",
+                  backgroundColor: "#424242",
                   cursor: "pointer",
                 },
               }}
@@ -80,13 +84,17 @@ const Sidebar = () => {
             </Box>
             <Box
               sx={{
-                display: "flex",
-                m: "20px",
-                cursor: "pointer",
                 color: "white",
+                my: 2,
+                p: 2,
+                borderRadius: 1,
+                backgroundColor: "#2e2e2e",
                 transition: "background-color 0.3s ease",
+                width: "100%", // Ensure full width
+                textAlign: "center", // Center text
                 "&:hover": {
-                  backgroundColor: "darkgray",
+                  backgroundColor: "#424242",
+                  cursor: "pointer",
                 },
               }}
               onClick={handleLogExpenseClick}

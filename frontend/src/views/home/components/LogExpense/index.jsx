@@ -1,3 +1,4 @@
+// src/components/ExpenseForm.js
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -9,112 +10,49 @@ import {
   Alert,
   IconButton,
 } from "@mui/material";
-import axios from "axios";
 import Sidebar from "../../../sidebar/Sidebar";
-import { toast } from "sonner";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import useApi from "../../../../api/logExpenses";
 
 const ExpenseForm = () => {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
-  const [error, setError] = useState("");
-  const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState(null);
 
-  // Fetch categories on component mount
+  const {
+    categories,
+    error,
+    fetchCategories,
+    addOrUpdateCategory,
+    deleteCategory,
+    logExpense,
+  } = useApi();
+
   useEffect(() => {
-    const fetchCategories = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/users/categories/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setCategories(response.data);
-      } catch (err) {
-        setError("Failed to fetch categories");
-      }
-    };
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const handleSubmitExpense = async (e) => {
     e.preventDefault();
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("User not authenticated.");
-        return;
-      }
-
-      await axios.post(
-        "http://127.0.0.1:8000/api/users/expenses/create/",
-        { amount, category, date },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      toast.success("Expense Logged");
-      setAmount("");
-      setCategory("");
-      setDate("");
-    } catch (err) {
-      setError("Failed to create expense");
-    }
+    await logExpense(amount, category, date);
+    setAmount("");
+    setCategory("");
+    setDate("");
   };
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-    try {
-      if (isEditing) {
-        await axios.put(
-          `http://127.0.0.1:8000/api/users/categories/${editingCategoryId}/`,
-          { name: newCategory },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        toast.success("Category updated successfully");
-        setIsEditing(false);
-        setEditingCategoryId(null);
-      } else {
-        await axios.post(
-          "http://127.0.0.1:8000/api/users/categories/",
-          { name: newCategory },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        toast.success("Category added successfully");
-      }
-      setNewCategory("");
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/users/categories/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCategories(response.data); // Refresh categories
-    } catch (err) {
-      setError("Failed to manage category");
-    }
+    await addOrUpdateCategory(
+      newCategory,
+      isEditing ? editingCategoryId : null
+    );
+    setNewCategory("");
+    setIsEditing(false);
+    setEditingCategoryId(null);
   };
 
   const handleEditCategory = (categoryId, categoryName) => {
@@ -124,21 +62,7 @@ const ExpenseForm = () => {
   };
 
   const handleDeleteCategory = async (categoryId) => {
-    const token = localStorage.getItem("token");
-    try {
-      await axios.delete(
-        `http://127.0.0.1:8000/api/users/categories/${categoryId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      toast.success("Category deleted successfully");
-      setCategories(categories.filter((cat) => cat.id !== categoryId));
-    } catch (err) {
-      setError("Failed to delete category");
-    }
+    await deleteCategory(categoryId);
   };
 
   return (
@@ -278,13 +202,12 @@ const ExpenseForm = () => {
           </Button>
         </form>
 
-        {/* Scrollable Category List */}
         <Box
           sx={{
-            maxHeight: "300px", // Adjust this height as needed
+            maxHeight: "300px",
             overflowY: "auto",
             marginBottom: "20px",
-            border: "1px solid #444", // Optional: border to differentiate scrollable area
+            border: "2px solid #444",
             borderRadius: "4px",
           }}
         >
