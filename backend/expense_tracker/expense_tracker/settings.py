@@ -60,7 +60,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'expense_tracker.urls'
-DRF_API_LOGGER_DATABASE = True
+
 
 TEMPLATES = [
     {
@@ -158,3 +158,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'expensetrackerganit@gmail.com'  
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+DRF_API_LOGGER_DATABASE = True

@@ -63,6 +63,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
     
 class ExpenseSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(slug_field='name', queryset=Category.objects.all())
     class Meta:
         model = Expense
         fields = ['id','user', 'amount', 'category', 'date']
