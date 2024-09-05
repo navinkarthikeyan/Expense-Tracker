@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
-from .models import Expense
+from .models import Expense, Category
 
 User = get_user_model()
 
@@ -18,10 +18,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         return attrs
-
-        # if User.objects.filter(email=attrs['email']).exists():
-        #     raise serializers.ValidationError({"email": "Email already registered."})
-            
     
     def create(self, validated_data):
         user = User.objects.create(
@@ -60,6 +56,11 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     uidb64 = serializers.CharField()
     token = serializers.CharField()
     new_password = serializers.CharField(max_length=16)
+    
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
     
 class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
