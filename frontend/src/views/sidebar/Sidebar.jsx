@@ -71,8 +71,8 @@ const Sidebar = () => {
                 borderRadius: 1,
                 backgroundColor: "#2e2e2e",
                 transition: "background-color 0.3s ease",
-                width: "100%", // Ensure full width
-                textAlign: "center", // Center text
+                width: "100%", 
+                textAlign: "center", 
                 "&:hover": {
                   backgroundColor: "#424242",
                   cursor: "pointer",
@@ -90,8 +90,8 @@ const Sidebar = () => {
                 borderRadius: 1,
                 backgroundColor: "#2e2e2e",
                 transition: "background-color 0.3s ease",
-                width: "100%", // Ensure full width
-                textAlign: "center", // Center text
+                width: "100%",
+                textAlign: "center", 
                 "&:hover": {
                   backgroundColor: "#424242",
                   cursor: "pointer",

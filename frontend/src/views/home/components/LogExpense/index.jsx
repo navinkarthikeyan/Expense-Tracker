@@ -1,4 +1,3 @@
-// src/components/ExpenseForm.js
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -9,6 +8,10 @@ import {
   Paper,
   Alert,
   IconButton,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import Sidebar from "../../../sidebar/Sidebar";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -110,33 +113,32 @@ const ExpenseForm = () => {
               },
             }}
           />
-          <TextField
-            label=""
-            select
-            fullWidth
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-            SelectProps={{ native: true }}
-            sx={{
-              marginBottom: "20px",
-              "& .MuiInputBase-input": {
+          <FormControl fullWidth required sx={{ marginBottom: "20px" }}>
+            <InputLabel sx={{ color: "white" }}>Select Category</InputLabel>
+            <Select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              sx={{
                 color: "white",
-              },
-              "& .MuiFormLabel-root": {
-                color: "white",
-              },
-            }}
-          >
-            <option value="" disabled>
-              Select Category
-            </option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
-                {cat.name}
-              </option>
-            ))}
-          </TextField>
+                "& .MuiSelect-icon": {
+                  color: "white",
+                },
+                "& .MuiSelect-select": {
+                  color: "white",
+                },
+                "& .MuiMenuItem-root": {
+                  color: "black", // Set the option text color to black
+                },
+              }}
+            >
+              <MenuItem value="" disabled>Select Category</MenuItem>
+              {categories.map((cat) => (
+                <MenuItem key={cat.id} value={cat.name}>
+                  {cat.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             type="date"
             fullWidth

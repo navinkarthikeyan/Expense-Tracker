@@ -15,6 +15,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid } from "@mui/x-data-grid";
 import Sidebar from "../sidebar/Sidebar";
 import useExpenses from "../../api/useExpenses";
+import Footer from "./components/Footer";
+
 
 const Home = () => {
   const { expenses, error, handleDeleteExpense, handleUpdateExpense } =
@@ -97,6 +99,7 @@ const Home = () => {
         width: "100vw",
         height: "100vh",
         display: "flex",
+        flexDirection: "column",
       }}
     >
       <Sidebar />
@@ -106,6 +109,8 @@ const Home = () => {
           flexGrow: 1,
           padding: "20px",
           color: "white",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Typography
@@ -127,7 +132,6 @@ const Home = () => {
             sx={{ backgroundColor: "white", borderRadius: "4px" }}
           />
           <TextField
-            // label="Search by Date"
             variant="outlined"
             type="date"
             fullWidth
@@ -164,8 +168,8 @@ const Home = () => {
             getRowId={(row) => row.id}
             sx={{
               "& .MuiDataGrid-columnHeader": {
-                backgroundColor: "#333", // Set header background color
-                color: "white", // Set header text color to white
+                backgroundColor: "#333",
+                color: "white",
                 display: "flex",
                 justifyContent: "space-between",
               },
@@ -220,6 +224,7 @@ const Home = () => {
           </DialogActions>
         </Dialog>
       </Box>
+      <Footer /> {/* Use Footer component */}
     </Box>
   );
 };

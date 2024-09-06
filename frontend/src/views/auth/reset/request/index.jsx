@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import Container from "../../components/Container";
 import ActionButton from "../../components/ActionButton";
-import "../../../../styles/passwordreset.css";
+// import "../../../../styles/passwordreset.css";
 import { toast } from "sonner";
 import { Box, Button, Input, Link, Typography } from "@mui/material";
 
@@ -28,13 +28,11 @@ const PasswordResetRequest = () => {
 
   return (
     <Container>
-           <Typography variant="h5" sx={{ textAlign: "center", mb: "16px" }}>
-
+      <Typography variant="h5" sx={{ textAlign: "center", mb: "16px" }}>
         Password Reset Request Form
       </Typography>
       <Box
-               sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
-
+        sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
         as="form"
         onSubmit={handleSubmit}
       >
