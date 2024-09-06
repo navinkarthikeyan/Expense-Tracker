@@ -1,37 +1,25 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { DataGrid } from "@mui/x-data-grid";
-import Sidebar from "../sidebar/Sidebar";
-import useExpenses from "../../api/useExpenses";
-import Footer from "./components/Footer";
-
+import React, { useState } from 'react';
+import { Box, Typography } from '@mui/material';
+import Sidebar from '../sidebar/Sidebar';
+import Footer from './components/Footer';
+import ExpenseDialog from './components/ExpenseDialog';
+import ExpenseFilters from './components/ExpenseFilters';
+import ExpenseTable from './components/ExpenseTable';
+import useExpenses from '../../api/useExpenses';
 
 const Home = () => {
-  const { expenses, error, handleDeleteExpense, handleUpdateExpense } =
-    useExpenses();
+  const { expenses, error, handleDeleteExpense, handleUpdateExpense } = useExpenses();
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [updatedExpense, setUpdatedExpense] = useState({
-    id: "",
-    category: "",
-    amount: "",
-    date: "",
+    id: '',
+    category: '',
+    amount: '',
+    date: '',
   });
 
-  const [searchCategory, setSearchCategory] = useState("");
-  const [searchDate, setSearchDate] = useState("");
+  const [searchCategory, setSearchCategory] = useState('');
+  const [searchDate, setSearchDate] = useState('');
 
   const handleOpenUpdateDialog = (expense) => {
     setSelectedExpense(expense);
@@ -50,56 +38,19 @@ const Home = () => {
   };
 
   const filteredExpenses = expenses.filter((expense) => {
-    const matchesCategory = expense.category
-      .toLowerCase()
-      .includes(searchCategory.toLowerCase());
+    const matchesCategory = expense.category.toLowerCase().includes(searchCategory.toLowerCase());
     const matchesDate = expense.date.includes(searchDate);
     return matchesCategory && matchesDate;
   });
 
-  const columns = [
-    { field: "category", headerName: "Category", flex: 1, editable: false },
-    { field: "amount", headerName: "Amount ₹", flex: 1, editable: false },
-    { field: "date", headerName: "Date", flex: 1, editable: false },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      sortable: false,
-      renderCell: (params) => (
-        <>
-          <IconButton
-            edge="end"
-            aria-label="delete"
-            onClick={() => handleDeleteExpense(params.row.id)}
-          >
-            <DeleteIcon color="error" />
-          </IconButton>
-          <IconButton
-            edge="end"
-            aria-label="edit"
-            onClick={() => handleOpenUpdateDialog(params.row)}
-            sx={{
-              marginLeft: "10px",
-              background: "white",
-              padding: "4px",
-            }}
-          >
-            <EditIcon fontSize="small" sx={{ color: "black" }} />
-          </IconButton>
-        </>
-      ),
-    },
-  ];
-
   return (
     <Box
       sx={{
-        background: "black",
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
+        background: 'black',
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <Sidebar />
@@ -107,124 +58,43 @@ const Home = () => {
         className="dashboard"
         sx={{
           flexGrow: 1,
-          padding: "20px",
-          color: "white",
-          display: "flex",
-          flexDirection: "column",
+          padding: '20px',
+          color: 'white',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <Typography
           variant="h4"
           gutterBottom
-          sx={{ display: "flex", justifyContent: "center" }}
+          sx={{ display: 'flex', justifyContent: 'center' }}
         >
           Expense List
         </Typography>
         {error && <Typography color="error">{error}</Typography>}
 
-        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-          <TextField
-            label="Search by Category"
-            variant="outlined"
-            fullWidth
-            value={searchCategory}
-            onChange={(e) => setSearchCategory(e.target.value)}
-            sx={{ backgroundColor: "white", borderRadius: "4px" }}
-          />
-          <TextField
-            variant="outlined"
-            type="date"
-            fullWidth
-            value={searchDate}
-            onChange={(e) => setSearchDate(e.target.value)}
-            sx={{ backgroundColor: "white", borderRadius: "4px" }}
-          />
-        </Box>
+        <ExpenseFilters
+          searchCategory={searchCategory}
+          setSearchCategory={setSearchCategory}
+          searchDate={searchDate}
+          setSearchDate={setSearchDate}
+        />
 
-        <Box
-          sx={{
-            height: "550px",
-            width: "100%",
-            backgroundColor: "#1a1a1a",
-            borderRadius: "4px",
-            "& .MuiDataGrid-cell": {
-              color: "white",
-              borderRight: "1px solid #444",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#333",
-            },
-            "& .MuiDataGrid-footerContainer": {
-              backgroundColor: "#333",
-            },
-          }}
-        >
-          <DataGrid
-            rows={filteredExpenses}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick
-            getRowId={(row) => row.id}
-            sx={{
-              "& .MuiDataGrid-columnHeader": {
-                backgroundColor: "#333",
-                color: "white",
-                display: "flex",
-                justifyContent: "space-between",
-              },
-            }}
-          />
-        </Box>
+        <ExpenseTable
+          expenses={filteredExpenses}
+          handleDeleteExpense={handleDeleteExpense}
+          handleOpenUpdateDialog={handleOpenUpdateDialog}
+        />
 
-        <Dialog open={openUpdateDialog} onClose={handleCloseUpdateDialog}>
-          <DialogTitle>Update Expense</DialogTitle>
-          <DialogContent>
-            <TextField
-              margin="dense"
-              label="Category"
-              type="text"
-              fullWidth
-              value={updatedExpense.category}
-              onChange={(e) =>
-                setUpdatedExpense({
-                  ...updatedExpense,
-                  category: e.target.value,
-                })
-              }
-            />
-            <TextField
-              margin="dense"
-              label="Amount"
-              type="number"
-              fullWidth
-              value={updatedExpense.amount}
-              onChange={(e) =>
-                setUpdatedExpense({ ...updatedExpense, amount: e.target.value })
-              }
-            />
-            <TextField
-              margin="dense"
-              label="Date"
-              type="date"
-              fullWidth
-              value={updatedExpense.date}
-              onChange={(e) =>
-                setUpdatedExpense({ ...updatedExpense, date: e.target.value })
-              }
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseUpdateDialog} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleUpdateClick} color="primary">
-              Update
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <ExpenseDialog
+          open={openUpdateDialog}
+          handleClose={handleCloseUpdateDialog}
+          updatedExpense={updatedExpense}
+          setUpdatedExpense={setUpdatedExpense}
+          handleUpdateClick={handleUpdateClick}
+        />
       </Box>
-      <Footer /> {/* Use Footer component */}
+      <Footer />
     </Box>
   );
 };

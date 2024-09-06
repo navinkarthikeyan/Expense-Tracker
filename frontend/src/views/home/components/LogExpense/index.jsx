@@ -1,22 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Container,
-  Paper,
-  Alert,
-  IconButton,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
+import { Box, Container, Paper, Alert, Typography } from "@mui/material";
 import Sidebar from "../../../sidebar/Sidebar";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import useApi from "../../../../api/logExpenses";
+import ExpenseLoggingForm from "./components/ExpenseLoggingForm";
+import CategoryManagementForm from "./components/CategoryManagementForm";
+import CategoryList from "./components/CategoryList";
 
 const ExpenseForm = () => {
   const [amount, setAmount] = useState("");
@@ -94,79 +82,16 @@ const ExpenseForm = () => {
           Log Expense
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
-        <form onSubmit={handleSubmitExpense}>
-          <TextField
-            label="Amount"
-            type="text"
-            inputMode="numeric"
-            fullWidth
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
-            sx={{
-              marginBottom: "20px",
-              "& .MuiInputBase-input": {
-                color: "white",
-              },
-              "& .MuiFormLabel-root": {
-                color: "white",
-              },
-            }}
-          />
-          <FormControl fullWidth required sx={{ marginBottom: "20px" }}>
-            <InputLabel sx={{ color: "white" }}>Select Category</InputLabel>
-            <Select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              sx={{
-                color: "white",
-                "& .MuiSelect-icon": {
-                  color: "white",
-                },
-                "& .MuiSelect-select": {
-                  color: "white",
-                },
-                "& .MuiMenuItem-root": {
-                  color: "black", // Set the option text color to black
-                },
-              }}
-            >
-              <MenuItem value="" disabled>Select Category</MenuItem>
-              {categories.map((cat) => (
-                <MenuItem key={cat.id} value={cat.name}>
-                  {cat.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            type="date"
-            fullWidth
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-            sx={{
-              marginBottom: "20px",
-              "& .MuiInputBase-input": {
-                color: "white",
-              },
-              "& .MuiFormLabel-root": {
-                color: "white",
-              },
-            }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ padding: "10px", marginTop: "10px" }}
-          >
-            Submit
-          </Button>
-        </form>
-
-        {/* Category Management Section */}
+        <ExpenseLoggingForm
+          amount={amount}
+          setAmount={setAmount}
+          category={category}
+          setCategory={setCategory}
+          date={date}
+          setDate={setDate}
+          categories={categories}
+          handleSubmitExpense={handleSubmitExpense}
+        />
         <Typography
           variant="h5"
           align="center"
@@ -175,74 +100,17 @@ const ExpenseForm = () => {
         >
           Manage Categories
         </Typography>
-        <form onSubmit={handleAddCategory}>
-          <TextField
-            label={isEditing ? "Edit Category" : "Add Category"}
-            type="text"
-            fullWidth
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            required
-            sx={{
-              marginBottom: "20px",
-              "& .MuiInputBase-input": {
-                color: "white",
-              },
-              "& .MuiFormLabel-root": {
-                color: "white",
-              },
-            }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ padding: "10px", marginBottom: "10px" }}
-          >
-            {isEditing ? "Update Category" : "Add Category"}
-          </Button>
-        </form>
-
-        <Box
-          sx={{
-            maxHeight: "300px",
-            overflowY: "auto",
-            marginBottom: "20px",
-            border: "2px solid #444",
-            borderRadius: "4px",
-          }}
-        >
-          {categories.map((cat) => (
-            <Paper
-              key={cat.id}
-              sx={{
-                padding: "10px",
-                marginBottom: "10px",
-                display: "flex",
-                justifyContent: "space-between",
-                backgroundColor: "#333",
-                color: "white",
-              }}
-            >
-              <Typography>{cat.name}</Typography>
-              <div>
-                <IconButton
-                  onClick={() => handleEditCategory(cat.id, cat.name)}
-                  sx={{ color: "white" }}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  onClick={() => handleDeleteCategory(cat.id)}
-                  sx={{ color: "white" }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </div>
-            </Paper>
-          ))}
-        </Box>
+        <CategoryManagementForm
+          isEditing={isEditing}
+          newCategory={newCategory}
+          setNewCategory={setNewCategory}
+          handleAddCategory={handleAddCategory}
+        />
+        <CategoryList
+          categories={categories}
+          handleEditCategory={handleEditCategory}
+          handleDeleteCategory={handleDeleteCategory}
+        />
       </Container>
     </Box>
   );
