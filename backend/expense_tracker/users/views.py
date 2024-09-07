@@ -12,9 +12,10 @@ from django.template.loader import render_to_string
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
-from .models import CustomUser, Expense, Category
-from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, ExpenseSerializer, CategorySerializer
+from .models import CustomUser, Expense, Category, Budget
+from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, ExpenseSerializer, CategorySerializer, BudgetSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import get_object_or_404
 
 
 User = get_user_model()
@@ -159,3 +160,22 @@ class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user)
+
+# Endpoint for setting the budget (Admin only)
+class SetBudgetView(generics.CreateAPIView):
+    queryset = Budget.objects.all()
+    serializer_class = BudgetSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def perform_create(self, serializer):
+        username = self.request.data.get('username')
+        user = get_object_or_404(CustomUser, username=username)
+        serializer.save(user=user)
+
+# Endpoint for viewing the budget (Authenticated users can view their own budgets)
+class ViewBudgetView(generics.ListAPIView):
+    serializer_class = BudgetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Budget.objects.filter(user=self.request.user)

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, PasswordResetRequestView, PasswordResetConfirmView, ExpenseCreateView, ExpenseListView, ExpenseUpdateView, ExpenseDeleteView, CategoryListCreateView, CategoryRetrieveUpdateDestroyView
+from .views import RegisterView, LoginView, PasswordResetRequestView, PasswordResetConfirmView, ExpenseCreateView, ExpenseListView, ExpenseUpdateView, ExpenseDeleteView, CategoryListCreateView, CategoryRetrieveUpdateDestroyView, SetBudgetView,ViewBudgetView
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
@@ -15,5 +15,8 @@ urlpatterns = [
     
     path('categories/', CategoryListCreateView.as_view(), name='category-list-create'),
     path('categories/<int:pk>/', CategoryRetrieveUpdateDestroyView.as_view(), name='category-retrieve-update-destroy'),
+    
+    path('budgets/set/', SetBudgetView.as_view(), name='budget-set'),       
+    path('budgets/', ViewBudgetView.as_view(), name='budget-view'),       
 
 ]

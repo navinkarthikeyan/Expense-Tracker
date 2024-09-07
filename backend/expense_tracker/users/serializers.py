@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
-from .models import Expense, Category
+from .models import Expense, Category, Budget
 
 User = get_user_model()
 
@@ -73,3 +73,9 @@ class ExpenseSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         validated_data.pop('user', None)
         return Expense.objects.create(user=user, **validated_data)
+
+class BudgetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Budget
+        fields = ['user', 'amount', 'month']
+        read_only_fields = ['user']
