@@ -5,7 +5,7 @@ import Footer from './components/Footer';
 import ExpenseDialog from './components/ExpenseDialog';
 import ExpenseFilters from './components/ExpenseFilters';
 import ExpenseTable from './components/ExpenseTable';
-import useExpenses from '../../api/useExpenses';
+import useExpenses from '../../api/useExpenses'; // Import hook
 
 const Home = () => {
   const { expenses, error, handleDeleteExpense, handleUpdateExpense } = useExpenses();

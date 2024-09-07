@@ -7,6 +7,7 @@ import Home from "./views/home";
 import Dashboard from "./views/dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LogExpense from "./views/home/components/LogExpense";
+import ViewBudget from "./views/home/components/ViewBudget";
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole="user">
               <LogExpense />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/home/view-budget"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <ViewBudget />
             </ProtectedRoute>
           }
         />

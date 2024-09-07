@@ -24,6 +24,10 @@ const Sidebar = () => {
     navigate("/home/log-expense");
   };
 
+  const handleViewBudgetClick = () => {
+    navigate("/home/view-budget");
+  };
+
   const handleViewExpenseClick = () => {
     navigate("/home");
   };
@@ -71,8 +75,8 @@ const Sidebar = () => {
                 borderRadius: 1,
                 backgroundColor: "#2e2e2e",
                 transition: "background-color 0.3s ease",
-                width: "100%", 
-                textAlign: "center", 
+                width: "100%",
+                textAlign: "center",
                 "&:hover": {
                   backgroundColor: "#424242",
                   cursor: "pointer",
@@ -91,7 +95,7 @@ const Sidebar = () => {
                 backgroundColor: "#2e2e2e",
                 transition: "background-color 0.3s ease",
                 width: "100%",
-                textAlign: "center", 
+                textAlign: "center",
                 "&:hover": {
                   backgroundColor: "#424242",
                   cursor: "pointer",
@@ -100,6 +104,25 @@ const Sidebar = () => {
               onClick={handleLogExpenseClick}
             >
               Log Expense
+            </Box>
+            <Box
+              sx={{
+                color: "white",
+                my: 2,
+                p: 2,
+                borderRadius: 1,
+                backgroundColor: "#2e2e2e",
+                transition: "background-color 0.3s ease",
+                width: "100%",
+                textAlign: "center",
+                "&:hover": {
+                  backgroundColor: "#424242",
+                  cursor: "pointer",
+                },
+              }}
+              onClick={handleViewBudgetClick}
+            >
+              View Budget
             </Box>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
