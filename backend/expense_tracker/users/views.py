@@ -179,3 +179,25 @@ class ViewBudgetView(generics.ListAPIView):
 
     def get_queryset(self):
         return Budget.objects.filter(user=self.request.user)
+    
+class BudgetUpdateView(generics.UpdateAPIView):
+    queryset = Budget.objects.all()
+    serializer_class = BudgetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Allow only the budget owner or admin to update the budget
+        if self.request.user.role == 'admin':
+            return Budget.objects.all()
+        return Budget.objects.filter(user=self.request.user)
+
+# Delete a budget (Admin or budget owner)
+class BudgetDeleteView(generics.DestroyAPIView):
+    queryset = Budget.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Allow only the budget owner or admin to delete the budget
+        if self.request.user.role == 'admin':
+            return Budget.objects.all()
+        return Budget.objects.filter(user=self.request.user)
