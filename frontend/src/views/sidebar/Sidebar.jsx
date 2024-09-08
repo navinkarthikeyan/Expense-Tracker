@@ -7,7 +7,7 @@ import { clearUserData } from "../../redux/user/slice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({ menuItems = [] }) => { // Set default value to an empty array
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,19 +17,7 @@ const Sidebar = () => {
     console.log("logout");
     removeCookie("token");
     dispatch(clearUserData());
-    toast.success("logout successful");
-  };
-
-  const handleLogExpenseClick = () => {
-    navigate("/home/log-expense");
-  };
-
-  const handleViewBudgetClick = () => {
-    navigate("/home/view-budget");
-  };
-
-  const handleViewExpenseClick = () => {
-    navigate("/home");
+    toast.success("Logout successful");
   };
 
   const toggleDrawer = (open) => () => {
@@ -62,68 +50,32 @@ const Sidebar = () => {
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
               flexDirection: "column",
               flexGrow: 1,
             }}
           >
-            <Box
-              sx={{
-                color: "white",
-                my: 2,
-                p: 2,
-                borderRadius: 1,
-                backgroundColor: "#2e2e2e",
-                transition: "background-color 0.3s ease",
-                width: "100%",
-                textAlign: "center",
-                "&:hover": {
-                  backgroundColor: "#424242",
-                  cursor: "pointer",
-                },
-              }}
-              onClick={handleViewExpenseClick}
-            >
-              View Expenses
-            </Box>
-            <Box
-              sx={{
-                color: "white",
-                my: 2,
-                p: 2,
-                borderRadius: 1,
-                backgroundColor: "#2e2e2e",
-                transition: "background-color 0.3s ease",
-                width: "100%",
-                textAlign: "center",
-                "&:hover": {
-                  backgroundColor: "#424242",
-                  cursor: "pointer",
-                },
-              }}
-              onClick={handleLogExpenseClick}
-            >
-              Log Expense
-            </Box>
-            <Box
-              sx={{
-                color: "white",
-                my: 2,
-                p: 2,
-                borderRadius: 1,
-                backgroundColor: "#2e2e2e",
-                transition: "background-color 0.3s ease",
-                width: "100%",
-                textAlign: "center",
-                "&:hover": {
-                  backgroundColor: "#424242",
-                  cursor: "pointer",
-                },
-              }}
-              onClick={handleViewBudgetClick}
-            >
-              View Budget
-            </Box>
+            {menuItems.map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  color: "white",
+                  my: 2,
+                  p: 2,
+                  borderRadius: 1,
+                  backgroundColor: "#2e2e2e",
+                  transition: "background-color 0.3s ease",
+                  width: "100%",
+                  textAlign: "center",
+                  "&:hover": {
+                    backgroundColor: "#424242",
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() => navigate(item.path)}
+              >
+                {item.label}
+              </Box>
+            ))}
           </Box>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Button

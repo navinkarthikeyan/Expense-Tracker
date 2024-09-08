@@ -55,7 +55,9 @@ const ExpenseLoggingForm = ({
           },
         }}
       >
-        <MenuItem value="" disabled>Select Category</MenuItem>
+        <MenuItem value="" disabled>
+          Select Category
+        </MenuItem>
         {categories.map((cat) => (
           <MenuItem key={cat.id} value={cat.name}>
             {cat.name}
