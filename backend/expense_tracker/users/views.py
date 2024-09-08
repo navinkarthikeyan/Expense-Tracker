@@ -1,4 +1,4 @@
-from rest_framework import generics, status, permissions                        
+from rest_framework import generics, status, permissions, viewsets                     
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
@@ -13,9 +13,11 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import CustomUser, Expense, Category, Budget
-from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, ExpenseSerializer, CategorySerializer, BudgetSerializer
+from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, ExpenseSerializer, CategorySerializer, BudgetSerializer, CustomUserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
+
 
 
 User = get_user_model()
@@ -161,7 +163,7 @@ class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user)
 
-# Endpoint for setting the budget (Admin only)
+
 class SetBudgetView(generics.CreateAPIView):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
@@ -172,7 +174,7 @@ class SetBudgetView(generics.CreateAPIView):
         user = get_object_or_404(CustomUser, username=username)
         serializer.save(user=user)
 
-# Endpoint for viewing the budget (Authenticated users can view their own budgets)
+
 class ViewBudgetView(generics.ListAPIView):
     serializer_class = BudgetSerializer
     permission_classes = [IsAuthenticated]
@@ -186,18 +188,49 @@ class BudgetUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Allow only the budget owner or admin to update the budget
+       
         if self.request.user.role == 'admin':
             return Budget.objects.all()
         return Budget.objects.filter(user=self.request.user)
 
-# Delete a budget (Admin or budget owner)
+
 class BudgetDeleteView(generics.DestroyAPIView):
     queryset = Budget.objects.all()
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Allow only the budget owner or admin to delete the budget
+        
         if self.request.user.role == 'admin':
             return Budget.objects.all()
         return Budget.objects.filter(user=self.request.user)
+    
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(detail=True, methods=['patch'], permission_classes=[permissions.IsAdminUser])
+    def change_role(self, request, pk=None):
+        user = self.get_object()
+        new_role = request.data.get('role')
+        
+        if new_role == 'admin':
+            user.role = 'admin'
+            user.is_staff = True
+            user.is_superuser = True
+            user.is_active = True  
+        elif new_role == 'user':
+            user.role = 'user'
+            user.is_staff = False
+            user.is_superuser = False
+        else:
+            return Response({'error': 'Invalid role'}, status=status.HTTP_400_BAD_REQUEST)
+        
+       
+        user.is_active = request.data.get('is_active', user.is_active)
+        user.is_staff = request.data.get('is_staff', user.is_staff)
+        user.is_superuser = request.data.get('is_superuser', user.is_superuser)
+
+        user.save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)

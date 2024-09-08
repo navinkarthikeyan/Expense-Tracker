@@ -1,6 +1,6 @@
 // src/views/auth/register/Register.jsx
 import React, { useState } from "react";
-import { registerUser } from "../../../api";
+import { registerUser, loginUser } from "../../../api";
 import { toast } from "sonner";
 import zxcvbn from "zxcvbn";
 import Container from "../components/Container";
@@ -19,6 +19,10 @@ import {
   TextField,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../../redux/user/slice";
+import { useCookies } from "react-cookie";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -29,6 +33,9 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role] = useState("user");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [, setCookie] = useCookies(["token"]);
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
@@ -52,23 +59,30 @@ const Register = () => {
       toast.error("Password is too weak");
       return;
     }
-    const promise = registerUser({
-      username,
-      password,
-      password2,
-      email,
-      role,
-    });
 
-    toast.promise(promise, {
-      loading: "Loading...",
-      success: "Registration successful",
-      error: (err) => {
-        return Object.values(err)
+    try {
+      await registerUser({
+        username,
+        password,
+        password2,
+        email,
+        role,
+      });
+
+      // Automatically log in after registration
+      const loginResponse = await loginUser({ username, password });
+      dispatch(setUserData(loginResponse));
+      setCookie("token", loginResponse?.token, { path: "/" });
+      localStorage.setItem("token", loginResponse?.token);
+      toast.success("Registration and login successful");
+      navigate("/home"); // Redirect to the home page or any other page
+    } catch (error) {
+      toast.error(
+        Object.values(error)
           .map((e) => e)
-          .join(", ");
-      },
-    });
+          .join(", ")
+      );
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -98,9 +112,7 @@ const Register = () => {
           value={username}
         />
         <FormControl variant="standard">
-          <InputLabel htmlFor="standard-adornment-password">
-            Password
-          </InputLabel>
+          <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
           <Input
             size="medium"
             type={showPassword ? "text" : "password"}
@@ -117,9 +129,7 @@ const Register = () => {
           />
         </FormControl>
         <FormControl variant="standard">
-          <InputLabel htmlFor="standard-adornment-password2">
-            Password again
-          </InputLabel>
+          <InputLabel htmlFor="standard-adornment-password2">Password again</InputLabel>
           <Input
             size="medium"
             type={showConfirmPassword ? "text" : "password"}

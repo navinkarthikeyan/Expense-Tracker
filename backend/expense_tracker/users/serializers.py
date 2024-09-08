@@ -79,3 +79,8 @@ class BudgetSerializer(serializers.ModelSerializer):
         model = Budget
         fields = ['user', 'amount', 'month']
         read_only_fields = ['user']
+        
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'role', 'is_active', 'is_staff', 'is_superuser']

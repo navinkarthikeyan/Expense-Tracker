@@ -5,8 +5,7 @@ import { toast } from "sonner";
 
 const useApi = () => {
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState("");
-
+  
   const fetchCategories = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -20,7 +19,7 @@ const useApi = () => {
       );
       setCategories(response.data);
     } catch (err) {
-      setError("Failed to fetch categories");
+      toast.error("Failed to fetch categories");
     }
   };
 
@@ -52,7 +51,7 @@ const useApi = () => {
       }
       await fetchCategories(); // Refresh the category list
     } catch (err) {
-      setError("Failed to manage category");
+      toast.error("Failed to manage category");
     }
   };
 
@@ -70,7 +69,7 @@ const useApi = () => {
       toast.success("Category deleted successfully");
       setCategories(categories.filter((cat) => cat.id !== id));
     } catch (err) {
-      setError("Failed to delete category");
+      toast.error("Failed to delete category");
     }
   };
 
@@ -78,7 +77,7 @@ const useApi = () => {
     const token = localStorage.getItem("token");
     try {
       if (!token) {
-        setError("User not authenticated.");
+        toast.error("User not authenticated.");
         return;
       }
       await axios.post(
@@ -92,13 +91,12 @@ const useApi = () => {
       );
       toast.success("Expense Logged");
     } catch (err) {
-      setError("Failed to create expense");
+      toast.error("Failed to create expense");
     }
   };
 
   return {
     categories,
-    error,
     fetchCategories,
     addOrUpdateCategory,
     deleteCategory,

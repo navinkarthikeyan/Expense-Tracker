@@ -4,14 +4,13 @@ import { toast } from "sonner";
 
 const useExpenses = () => {
   const [expenses, setExpenses] = useState([]);
-  const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
 
   const fetchExpenses = async () => {
     try {
       if (!token) {
-        setError("User not authenticated.");
+        toast.error("User not authenticated.");
         return;
       }
 
@@ -26,7 +25,7 @@ const useExpenses = () => {
 
       setExpenses(response.data);
     } catch (err) {
-      setError("Failed to fetch expenses.");
+      toast.error("Failed to fetch expenses.");
       console.error(err);
     }
   };
@@ -34,7 +33,7 @@ const useExpenses = () => {
   const handleDeleteExpense = async (expenseId) => {
     try {
       if (!token) {
-        setError("User not authenticated.");
+        toast.error("User not authenticated.");
         return;
       }
 
@@ -50,8 +49,9 @@ const useExpenses = () => {
       setExpenses((prevExpenses) =>
         prevExpenses.filter((expense) => expense.id !== expenseId)
       );
+      toast.success("Expense deleted successfully.");
     } catch (err) {
-      setError("Failed to delete expense.");
+      toast.error("Failed to delete expense.");
       console.error(err);
     }
   };
@@ -59,7 +59,7 @@ const useExpenses = () => {
   const handleUpdateExpense = async (updatedExpense) => {
     try {
       if (!token) {
-        setError("User not authenticated.");
+        toast.error("User not authenticated.");
         return;
       }
 
@@ -78,8 +78,9 @@ const useExpenses = () => {
           expense.id === response.data.id ? response.data : expense
         )
       );
+      toast.success("Expense updated successfully.");
     } catch (err) {
-      setError("Failed to update expense.");
+      toast.error("Failed to update expense.");
       console.error(err);
     }
   };
@@ -88,7 +89,7 @@ const useExpenses = () => {
     fetchExpenses();
   }, []);
 
-  return { expenses, error, handleDeleteExpense, handleUpdateExpense };
+  return { expenses, handleDeleteExpense, handleUpdateExpense };
 };
 
 export default useExpenses;

@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
     RegisterView, 
     LoginView, 
@@ -13,8 +14,13 @@ from .views import (
     SetBudgetView,        
     ViewBudgetView,       
     BudgetUpdateView,    
-    BudgetDeleteView     
+    BudgetDeleteView,
+    UserViewSet  # Add the UserViewSet here
 )
+
+# Create a router for the UserViewSet
+router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
@@ -31,9 +37,11 @@ urlpatterns = [
     path('categories/', CategoryListCreateView.as_view(), name='category-list-create'),
     path('categories/<int:pk>/', CategoryRetrieveUpdateDestroyView.as_view(), name='category-retrieve-update-destroy'),
     
-  
     path('budgets/set/', SetBudgetView.as_view(), name='set-budget'), 
     path('budgets/view/', ViewBudgetView.as_view(), name='view-budget'),  
     path('budgets/update/<int:pk>/', BudgetUpdateView.as_view(), name='update-budget'),  
     path('budgets/delete/<int:pk>/', BudgetDeleteView.as_view(), name='delete-budget'),  
+    
+   
+    path('', include(router.urls)), 
 ]
