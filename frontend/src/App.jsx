@@ -8,6 +8,7 @@ import Dashboard from "./views/dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LogExpense from "./views/home/components/LogExpense";
 import ViewBudget from "./views/home/components/ViewBudget";
+import SetBudget from "./views/dashboard/components/SetBudget";
 
 function App() {
   return (
@@ -49,6 +50,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/set-budget"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <SetBudget></SetBudget>
             </ProtectedRoute>
           }
         />

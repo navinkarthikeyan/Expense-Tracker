@@ -3,7 +3,11 @@ import { Box, Paper, Typography, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
-const CategoryList = ({ categories, handleEditCategory, handleDeleteCategory }) => (
+const CategoryList = ({
+  categories,
+  handleEditCategory,
+  handleDeleteCategory,
+}) => (
   <Box
     sx={{
       maxHeight: "300px",
@@ -35,7 +39,7 @@ const CategoryList = ({ categories, handleEditCategory, handleDeleteCategory }) 
           </IconButton>
           <IconButton
             onClick={() => handleDeleteCategory(cat.id)}
-            sx={{ color: "white" }}
+            sx={{ color: "red" }}
           >
             <DeleteIcon />
           </IconButton>

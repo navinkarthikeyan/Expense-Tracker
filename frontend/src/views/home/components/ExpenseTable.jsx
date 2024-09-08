@@ -24,8 +24,9 @@ const ExpenseTable = ({
             edge="end"
             aria-label="delete"
             onClick={() => handleDeleteExpense(params.row.id)}
+            sx={{ color: "red" }}
           >
-            <DeleteIcon color="error" />
+            <DeleteIcon />
           </IconButton>
           <IconButton
             edge="end"
@@ -33,11 +34,12 @@ const ExpenseTable = ({
             onClick={() => handleOpenUpdateDialog(params.row)}
             sx={{
               marginLeft: "10px",
-              background: "white",
+              backgroundColor: "transparent",
               padding: "4px",
+              color: "white",
             }}
           >
-            <EditIcon fontSize="small" sx={{ color: "black" }} />
+            <EditIcon fontSize="small" />
           </IconButton>
         </>
       ),

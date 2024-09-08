@@ -12,6 +12,12 @@ const ViewBudget = () => {
     0
   );
 
+  const homeMenuItems = [
+    { label: "View Expenses", path: "/home" },
+    { label: "Log Expense", path: "/home/log-expense" },
+    { label: "View Budget", path: "/home/view-budget" },
+  ];
+
   return (
     <Box
       sx={{
@@ -21,7 +27,7 @@ const ViewBudget = () => {
         display: "flex",
       }}
     >
-      <Sidebar />
+      <Sidebar menuItems={homeMenuItems} />
       <Box
         className="dashboard"
         sx={{

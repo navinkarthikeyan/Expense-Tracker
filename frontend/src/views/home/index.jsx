@@ -43,6 +43,12 @@ const Home = () => {
     return matchesCategory && matchesDate;
   });
 
+  const homeMenuItems = [
+    { label: 'View Expenses', path: '/home' },
+    { label: 'Log Expense', path: '/home/log-expense' },
+    { label: 'View Budget', path: '/home/view-budget' },
+  ];
+
   return (
     <Box
       sx={{
@@ -53,7 +59,7 @@ const Home = () => {
         flexDirection: 'column',
       }}
     >
-      <Sidebar />
+      <Sidebar menuItems={homeMenuItems} />
       <Box
         className="dashboard"
         sx={{

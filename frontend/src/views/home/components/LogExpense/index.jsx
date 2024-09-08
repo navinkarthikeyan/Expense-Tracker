@@ -52,6 +52,12 @@ const ExpenseForm = () => {
     setNewCategory(categoryName);
   };
 
+  const homeMenuItems = [
+    { label: 'View Expenses', path: '/home' },
+    { label: 'Log Expense', path: '/home/log-expense' },
+    { label: 'View Budget', path: '/home/view-budget' },
+  ];
+
   const handleDeleteCategory = async (categoryId) => {
     await deleteCategory(categoryId);
   };
@@ -65,7 +71,7 @@ const ExpenseForm = () => {
         display: "flex",
       }}
     >
-      <Sidebar />
+     <Sidebar menuItems={homeMenuItems} />
       <Container
         component={Paper}
         elevation={3}

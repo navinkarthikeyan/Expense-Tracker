@@ -1,25 +1,11 @@
 import React from "react";
-import Sidebar from "../sidebar/Sidebar";
-import { useDispatch } from "react-redux";
-import { clearUserData } from "../../redux/user/slice";
-import Cookies from "js-cookie";
-import { Link } from "react-router-dom";
+import Sidebar from "../../sidebar/Sidebar";
 import { Box, Typography } from "@mui/material";
-import Footer from "../home/components/Footer";
 
-const AdminDash = () => {
-  const dispatch = useDispatch();
-
-  const handleLogout = () => {
-    console.log("logout");
-    Cookies.remove("token");
-    dispatch(clearUserData());
-  };
-
+const SetBudget = () => {
   const adminMenuItems = [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Set Budget", path: "/dashboard/set-budget" },
-    // Add more admin-specific menu items here
   ];
 
   return (
@@ -48,12 +34,11 @@ const AdminDash = () => {
           gutterBottom
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          Admin Dashboard
+          Set Budget
         </Typography>
       </Box>
-      <Footer />
     </Box>
   );
 };
 
-export default AdminDash;
+export default SetBudget;
