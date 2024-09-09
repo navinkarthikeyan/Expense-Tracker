@@ -39,8 +39,8 @@ urlpatterns = [
     
     path('budgets/set/', SetBudgetView.as_view(), name='set-budget'), 
     path('budgets/view/', ViewBudgetView.as_view(), name='view-budget'),  
-    path('budgets/update/<int:pk>/', BudgetUpdateView.as_view(), name='update-budget'),  
-    path('budgets/delete/<int:pk>/', BudgetDeleteView.as_view(), name='delete-budget'),  
+    path('budgets/update/<int:user_id>/', BudgetUpdateView.as_view(), name='update-budget'),  
+    path('budgets/delete/<int:user_id>/', BudgetDeleteView.as_view(), name='delete-budget'),  
     
    
     path('', include(router.urls)), 

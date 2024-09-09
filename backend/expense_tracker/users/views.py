@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView    
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import BasePermission , IsAuthenticated
+from rest_framework.permissions import BasePermission , IsAuthenticated, IsAdminUser
 from django.contrib.auth import get_user_model , authenticate
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -185,24 +185,21 @@ class ViewBudgetView(generics.ListAPIView):
 class BudgetUpdateView(generics.UpdateAPIView):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]  # Only allow admins to update the budget
 
-    def get_queryset(self):
-       
-        if self.request.user.role == 'admin':
-            return Budget.objects.all()
-        return Budget.objects.filter(user=self.request.user)
+    def get_object(self):
+        user_id = self.kwargs.get('user_id')  # Get the user_id from the URL
+        return get_object_or_404(Budget, user__id=user_id)  # Filter by user_id
 
 
 class BudgetDeleteView(generics.DestroyAPIView):
     queryset = Budget.objects.all()
-    permission_classes = [IsAuthenticated]
+    serializer_class = BudgetSerializer
+    permission_classes = [IsAdminUser]  # Only allow admins to delete the budget
 
-    def get_queryset(self):
-        
-        if self.request.user.role == 'admin':
-            return Budget.objects.all()
-        return Budget.objects.filter(user=self.request.user)
+    def get_object(self):
+        user_id = self.kwargs.get('user_id')  # Get the user_id from the URL
+        return get_object_or_404(Budget, user__id=user_id)  # Filter by user_id
     
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
