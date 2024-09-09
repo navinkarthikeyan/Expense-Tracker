@@ -20,6 +20,7 @@ const Home = () => {
 
   const [searchCategory, setSearchCategory] = useState('');
   const [searchDate, setSearchDate] = useState('');
+  const [amountSort, setAmountSort] = useState('');
 
   const handleOpenUpdateDialog = (expense) => {
     setSelectedExpense(expense);
@@ -37,11 +38,21 @@ const Home = () => {
     handleCloseUpdateDialog();
   };
 
-  const filteredExpenses = expenses.filter((expense) => {
-    const matchesCategory = expense.category.toLowerCase().includes(searchCategory.toLowerCase());
-    const matchesDate = expense.date.includes(searchDate);
-    return matchesCategory && matchesDate;
-  });
+  // Apply filters and sorting
+  const filteredExpenses = expenses
+    .filter((expense) => {
+      const matchesCategory = expense.category.toLowerCase().includes(searchCategory.toLowerCase());
+      const matchesDate = expense.date.includes(searchDate);
+      return matchesCategory && matchesDate;
+    })
+    .sort((a, b) => {
+      if (amountSort === 'asc') {
+        return a.amount - b.amount;
+      } else if (amountSort === 'desc') {
+        return b.amount - a.amount;
+      }
+      return 0; // Default sorting (no sorting)
+    });
 
   const homeMenuItems = [
     { label: 'View Expenses', path: '/home' },
@@ -84,6 +95,8 @@ const Home = () => {
           setSearchCategory={setSearchCategory}
           searchDate={searchDate}
           setSearchDate={setSearchDate}
+          amountSort={amountSort}
+          setAmountSort={setAmountSort}
         />
 
         <ExpenseTable

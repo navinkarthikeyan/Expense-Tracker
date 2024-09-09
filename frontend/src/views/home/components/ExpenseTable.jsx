@@ -63,6 +63,15 @@ const ExpenseTable = ({
         "& .MuiDataGrid-footerContainer": {
           backgroundColor: "#333",
         },
+        "& .MuiTablePagination-displayedRows": {
+          color: "white", 
+        },
+        "& .MuiTablePagination-selectLabel": {
+          color: "white", 
+        },
+        "& .MuiTablePagination-input": {
+          color: "white", 
+        },
       }}
     >
       <DataGrid
