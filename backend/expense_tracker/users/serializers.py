@@ -63,16 +63,26 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
     
 class ExpenseSerializer(serializers.ModelSerializer):
-    category = serializers.SlugRelatedField(slug_field='name', queryset=Category.objects.all())
+    category = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Category.objects.none()  # Default to an empty queryset
+    )
+
     class Meta:
         model = Expense
-        fields = ['id','user', 'amount', 'category', 'date']
+        fields = ['id', 'user', 'amount', 'category', 'date']
         read_only_fields = ['id', 'user']
-        
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ensure category queryset is restricted to the categories of the current user
+        self.fields['category'].queryset = Category.objects.filter(user=self.context['request'].user)
+
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data.pop('user', None)
         return Expense.objects.create(user=user, **validated_data)
+
 
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
