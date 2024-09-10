@@ -1,12 +1,53 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../sidebar/Sidebar";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, TextField, Button } from "@mui/material";
+import axios from "axios";
+import { toast } from "sonner";
 
 const SetBudget = () => {
+  const [username, setUsername] = useState("");
+  const [amount, setAmount] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [budget, setBudget] = useState(null);
+
+  const token = localStorage.getItem("token");
+
   const adminMenuItems = [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Set Budget", path: "/dashboard/set-budget" },
   ];
+
+  const handleSetBudget = async () => {
+    try {
+      if (!token) {
+        toast.error("User not authenticated.");
+        setError("User not authenticated.");
+        return;
+      }
+
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/users/budgets/update/${username}/`,
+        { amount: parseFloat(amount) }, // Ensure the amount is a number
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setMessage("Budget updated successfully!");
+        toast.success("Budget updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating budget:", error);
+      setMessage("Failed to update budget. Please try again.");
+      toast.error("Failed to update budget.");
+    }
+  };
+
+  
 
   return (
     <Box
@@ -36,6 +77,65 @@ const SetBudget = () => {
         >
           Set Budget
         </Typography>
+
+        <Box
+          component="form"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSetBudget();
+          }}
+        >
+          <TextField
+            label="Username"
+            variant="outlined"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            sx={{ marginBottom: "20px", width: "300px" }}
+            InputLabelProps={{ style: { color: "white" } }}
+            InputProps={{ style: { color: "white" } }}
+          />
+          <TextField
+            label="Amount"
+            variant="outlined"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            sx={{ marginBottom: "20px", width: "300px" }}
+            InputLabelProps={{ style: { color: "white" } }}
+            InputProps={{ style: { color: "white" } }}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ marginBottom: "20px" }}
+          >
+            Set Budget
+          </Button>
+          {message && (
+            <Typography variant="body1" sx={{ color: "white" }}>
+              {message}
+            </Typography>
+          )}
+          {error && (
+            <Typography variant="body1" sx={{ color: "red" }}>
+              {error}
+            </Typography>
+          )}
+        </Box>
+
+        {budget && (
+          <Typography
+            variant="body1"
+            sx={{ color: "white", textAlign: "center", marginTop: "20px" }}
+          >
+            Current Budget: ${budget}
+          </Typography>
+        )}
       </Box>
     </Box>
   );

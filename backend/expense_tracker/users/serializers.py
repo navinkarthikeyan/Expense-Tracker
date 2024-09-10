@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
-from .models import Expense, Category, Budget
+from .models import Expense, Category, Budget, BudgetMonthly
 
 User = get_user_model()
 
@@ -77,10 +77,31 @@ class ExpenseSerializer(serializers.ModelSerializer):
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Budget
-        fields = ['user', 'amount', 'month']
+        fields = ['user', 'amount']
         read_only_fields = ['user']
         
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'role', 'is_active', 'is_staff', 'is_superuser']
+
+class BudgetMonthlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BudgetMonthly
+        fields = [
+            'user', 
+            'january', 
+            'february', 
+            'march', 
+            'april', 
+            'may', 
+            'june', 
+            'july', 
+            'august', 
+            'september', 
+            'october', 
+            'november', 
+            'december', 
+            'total_amount'
+        ]
+        read_only_fields = ['user', 'total_amount']

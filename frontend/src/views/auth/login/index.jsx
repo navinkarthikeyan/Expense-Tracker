@@ -51,6 +51,7 @@ const Login = () => {
         dispatch(setUserData(data));
         setCookie("token", data?.token, { path: "/" });
         localStorage.setItem("token", data?.token);
+        localStorage.setItem("username",username);
         handleRedirect(data?.role);
         return `Login successful! Role: ${data.role}`;
       },

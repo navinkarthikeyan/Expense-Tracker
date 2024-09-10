@@ -6,6 +6,7 @@ import zxcvbn from "zxcvbn";
 import Container from "../components/Container";
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
+import useBudget from "../../../api/useBudget";
 import {
   Box,
   Input,
@@ -23,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../../redux/user/slice";
 import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -69,13 +71,40 @@ const Register = () => {
         role,
       });
 
-      // Automatically log in after registration
       const loginResponse = await loginUser({ username, password });
       dispatch(setUserData(loginResponse));
       setCookie("token", loginResponse?.token, { path: "/" });
       localStorage.setItem("token", loginResponse?.token);
+
+      // create budget view here with username from registered user and amount as 00.00 with the token fetched from localStorage
+      const token = localStorage.getItem("token");
+      if (token) {
+        const budgetResponse = await axios.post(
+          "http://127.0.0.1:8000/api/users/budgets/set/",
+          {
+            username: username, // send the username from registration
+            amount: 0, // initial budget amount
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Send the token for authentication
+            },
+          }
+        );
+        console.log(budgetResponse);
+        if (budgetResponse.status === 201) {
+          // Successfully created the budget
+          toast.success("Initial budget created successfully.");
+          console.log("Budget Response:", budgetResponse.data); // Log the budget data for debugging or further use
+        } else {
+          toast.error("Failed to create initial budget.");
+        }
+      } else {
+        toast.error("Failed to fetch authentication token.");
+      }
+
       toast.success("Registration and login successful");
-      navigate("/home"); // Redirect to the home page or any other page
+      navigate("/home");
     } catch (error) {
       toast.error(
         Object.values(error)
@@ -112,7 +141,9 @@ const Register = () => {
           value={username}
         />
         <FormControl variant="standard">
-          <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+          <InputLabel htmlFor="standard-adornment-password">
+            Password
+          </InputLabel>
           <Input
             size="medium"
             type={showPassword ? "text" : "password"}
@@ -129,7 +160,9 @@ const Register = () => {
           />
         </FormControl>
         <FormControl variant="standard">
-          <InputLabel htmlFor="standard-adornment-password2">Password again</InputLabel>
+          <InputLabel htmlFor="standard-adornment-password2">
+            Password again
+          </InputLabel>
           <Input
             size="medium"
             type={showConfirmPassword ? "text" : "password"}

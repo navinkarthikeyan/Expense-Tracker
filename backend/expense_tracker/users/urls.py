@@ -15,7 +15,8 @@ from .views import (
     ViewBudgetView,       
     BudgetUpdateView,    
     BudgetDeleteView,
-    UserViewSet  # Add the UserViewSet here
+    UserViewSet,
+    SetBudgetMonthlyView, ViewBudgetMonthlyView, UpdateBudgetMonthlyView, DeleteBudgetMonthlyView# Add the UserViewSet here
 )
 
 # Create a router for the UserViewSet
@@ -39,8 +40,13 @@ urlpatterns = [
     
     path('budgets/set/', SetBudgetView.as_view(), name='set-budget'), 
     path('budgets/view/', ViewBudgetView.as_view(), name='view-budget'),  
-    path('budgets/update/<int:user_id>/', BudgetUpdateView.as_view(), name='update-budget'),  
-    path('budgets/delete/<int:user_id>/', BudgetDeleteView.as_view(), name='delete-budget'),  
+    path('budgets/update/<str:username>/', BudgetUpdateView.as_view(), name='update-budget'),  
+    path('budgets/delete/<str:username>/', BudgetDeleteView.as_view(), name='delete-budget'),  
+    
+    path('budget-monthly/set/', SetBudgetMonthlyView.as_view(), name='set-budget-monthly'),
+    path('budget-monthly/view/', ViewBudgetMonthlyView.as_view(), name='view-budget-monthly'),
+    path('budget-monthly/update/<str:username>/', UpdateBudgetMonthlyView.as_view(), name='update-budget-monthly'),
+    path('budget-monthly/delete/<str:username>/', DeleteBudgetMonthlyView.as_view(), name='delete-budget-monthly'),
     
    
     path('', include(router.urls)), 
