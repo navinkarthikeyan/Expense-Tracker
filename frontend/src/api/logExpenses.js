@@ -1,12 +1,12 @@
-// src/hooks/useApi.js
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
 const useApi = () => {
   const [categories, setCategories] = useState([]);
-  
-  const fetchCategories = async () => {
+
+  // Memoize the fetchCategories function to prevent unnecessary re-renders
+  const fetchCategories = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
@@ -21,7 +21,7 @@ const useApi = () => {
     } catch (err) {
       toast.error("Failed to fetch categories");
     }
-  };
+  }, []); // Empty dependency array ensures this function is not recreated
 
   const addOrUpdateCategory = async (category, id = null) => {
     const token = localStorage.getItem("token");
@@ -49,7 +49,7 @@ const useApi = () => {
         );
         toast.success("Category added successfully");
       }
-      await fetchCategories(); // Refresh the category list
+      await fetchCategories(); // Refresh the category list after adding/updating
     } catch (err) {
       toast.error("Failed to manage category");
     }
@@ -67,7 +67,9 @@ const useApi = () => {
         }
       );
       toast.success("Category deleted successfully");
-      setCategories(categories.filter((cat) => cat.id !== id));
+      setCategories((prevCategories) =>
+        prevCategories.filter((cat) => cat.id !== id)
+      );
     } catch (err) {
       toast.error("Failed to delete category");
     }

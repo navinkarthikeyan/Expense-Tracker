@@ -6,12 +6,10 @@ import zxcvbn from "zxcvbn";
 import Container from "../components/Container";
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
-import useBudget from "../../../api/useBudget";
 import {
   Box,
   Input,
   Link,
-  Typography,
   LinearProgress,
   IconButton,
   InputAdornment,
@@ -76,26 +74,26 @@ const Register = () => {
       setCookie("token", loginResponse?.token, { path: "/" });
       localStorage.setItem("token", loginResponse?.token);
 
-      // create budget view here with username from registered user and amount as 00.00 with the token fetched from localStorage
+      
       const token = localStorage.getItem("token");
       if (token) {
         const budgetResponse = await axios.post(
           "http://127.0.0.1:8000/api/users/budgets/set/",
           {
-            username: username, // send the username from registration
-            amount: 0, // initial budget amount
+            username: username, 
+            amount: 0.0, 
           },
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Send the token for authentication
+              Authorization: `Bearer ${token}`, 
             },
           }
         );
         console.log(budgetResponse);
         if (budgetResponse.status === 201) {
-          // Successfully created the budget
+          
           toast.success("Initial budget created successfully.");
-          console.log("Budget Response:", budgetResponse.data); // Log the budget data for debugging or further use
+          console.log("Budget Response:", budgetResponse.data); 
         } else {
           toast.error("Failed to create initial budget.");
         }

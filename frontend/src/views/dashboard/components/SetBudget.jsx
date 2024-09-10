@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Sidebar from "../../sidebar/Sidebar";
-import { Box, Typography, TextField, Button } from "@mui/material";
+import { Box, Typography, Button, FormControl, InputLabel, Input } from "@mui/material";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -9,7 +9,7 @@ const SetBudget = () => {
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [budget, setBudget] = useState(null);
+  const [budget] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -28,7 +28,7 @@ const SetBudget = () => {
 
       const response = await axios.put(
         `http://127.0.0.1:8000/api/users/budgets/update/${username}/`,
-        { amount: parseFloat(amount) }, // Ensure the amount is a number
+        { amount: parseFloat(amount) }, 
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,8 +46,6 @@ const SetBudget = () => {
       toast.error("Failed to update budget.");
     }
   };
-
-  
 
   return (
     <Box
@@ -90,24 +88,27 @@ const SetBudget = () => {
             handleSetBudget();
           }}
         >
-          <TextField
-            label="Username"
-            variant="outlined"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            sx={{ marginBottom: "20px", width: "300px" }}
-            InputLabelProps={{ style: { color: "white" } }}
-            InputProps={{ style: { color: "white" } }}
-          />
-          <TextField
-            label="Amount"
-            variant="outlined"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            sx={{ marginBottom: "20px", width: "300px" }}
-            InputLabelProps={{ style: { color: "white" } }}
-            InputProps={{ style: { color: "white" } }}
-          />
+          <FormControl variant="outlined" sx={{ marginBottom: "20px", width: "300px" }}>
+            <InputLabel htmlFor="username" sx={{ color: "white" }}>Username</InputLabel>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              sx={{ color: "white", '& .MuiInputBase-input': { color: 'white' }, '& .MuiFormLabel-root': { color: 'white' }}}
+            />
+          </FormControl>
+          
+          <FormControl variant="outlined" sx={{ marginBottom: "20px", width: "300px" }}>
+            <InputLabel htmlFor="amount" sx={{ color: "white" }}>Amount</InputLabel>
+            <Input
+              id="amount"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              sx={{ color: "white", '& .MuiInputBase-input': { color: 'white' }, '& .MuiFormLabel-root': { color: 'white' }}}
+            />
+          </FormControl>
+          
           <Button
             type="submit"
             variant="contained"

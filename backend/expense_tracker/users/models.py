@@ -48,8 +48,6 @@ class Budget(models.Model):
     def _tr__(self):
         return f"{self.user.username} - {self.amount}"
 
-from django.db import models
-from django.conf import settings
 
 class BudgetMonthly(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budget_monthly')
@@ -71,7 +69,7 @@ class BudgetMonthly(models.Model):
     # Total amount field
     total_amount = models.IntegerField(max_length=12)
 
-    def cculate_total(self):
+    def caculate_total(self):
         # Method to calculate the total amount
         self.total_amount = (
             self.january + self.february + self.march + self.april +

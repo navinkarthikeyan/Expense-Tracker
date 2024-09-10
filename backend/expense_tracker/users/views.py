@@ -17,7 +17,8 @@ from .serializers import RegisterSerializer, LoginSerializer, PasswordResetSeria
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
-
+from rest_framework.exceptions import ValidationError
+from django.db.models import Sum
 
 
 User = get_user_model()
@@ -122,7 +123,30 @@ class ExpenseCreateView(generics.CreateAPIView):
         return Expense.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        user = self.request.user
+        amount = serializer.validated_data['amount']
+        date = serializer.validated_data['date']
+        month = date.strftime('%B').lower() 
+
+       
+        try:
+            budget_monthly = BudgetMonthly.objects.get(user=user)
+        except BudgetMonthly.DoesNotExist:
+            raise ValidationError({"error": "No monthly budget set for this user."})
+
+       
+        monthly_budget = getattr(budget_monthly, month)
+
+       
+        total_expenses_for_month = Expense.objects.filter(user=user, date__month=date.month).aggregate(Sum('amount'))['amount__sum'] or 0
+
+        
+        if total_expenses_for_month + amount > monthly_budget:
+            remaining_budget = monthly_budget - total_expenses_for_month
+            raise ValidationError({"error": f"Expense exceeds the budget for {date.strftime('%B')}. Remaining budget: {remaining_budget}"})
+
+       
+        serializer.save(user=user)
 
 
 class ExpenseListView(generics.ListAPIView):
@@ -174,12 +198,12 @@ class SetBudgetView(generics.CreateAPIView):
         user = get_object_or_404(CustomUser, username=username)
         budget = serializer.save(user=user)
         
-        # Trigger creation of BudgetMonthly
-        if self.request.user:  # Ensure only admin triggers BudgetMonthly creation
+      
+        if self.request.user: 
             amount_per_month = budget.amount / 12
-            total_amount = budget.amount  # Since it's equally divided
+            total_amount = budget.amount  
 
-            # Create BudgetMonthly instance with total_amount
+            
             BudgetMonthly.objects.create(
                 user=user,
                 january=amount_per_month,
@@ -210,23 +234,23 @@ class ViewBudgetView(generics.ListAPIView):
 class BudgetUpdateView(generics.UpdateAPIView):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
-    permission_classes = [permissions.IsAdminUser]  # Only allow admins to update the budget
+    permission_classes = [permissions.IsAdminUser]  
 
     def get_object(self):
-        username = self.kwargs.get('username')  # Get the username from the URL
+        username = self.kwargs.get('username')  
         user = get_object_or_404(get_user_model(), username=username)
-        return get_object_or_404(Budget, user=user)  # Fetch the budget using the user object
+        return get_object_or_404(Budget, user=user)  
 
     def perform_update(self, serializer):
-        budget = serializer.save()  # Save the updated budget
+        budget = serializer.save()  
         
-        # Update the corresponding BudgetMonthly object
+       
         try:
             budget_monthly = BudgetMonthly.objects.get(user=budget.user)
             amount_per_month = budget.amount / 12
-            total_amount = budget.amount # Calculate the new amount for each month
+            total_amount = budget.amount 
             
-            # Update the monthly budget and total amount
+            
             budget_monthly.january = amount_per_month
             budget_monthly.february = amount_per_month
             budget_monthly.march = amount_per_month
@@ -239,22 +263,22 @@ class BudgetUpdateView(generics.UpdateAPIView):
             budget_monthly.october = amount_per_month
             budget_monthly.november = amount_per_month
             budget_monthly.december = amount_per_month
-            budget_monthly.total_amount = total_amount  # Update the total amount
+            budget_monthly.total_amount = total_amount  
             
-            # Save the updated BudgetMonthly object
+          
             budget_monthly.save()
         except BudgetMonthly.DoesNotExist:
-            # Handle case where BudgetMonthly object doesn't exist
+           
             pass
 
 
 class BudgetDeleteView(generics.DestroyAPIView):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
-    permission_classes = [IsAdminUser]  # Only allow admins to delete the budget
+    permission_classes = [IsAdminUser]  
 
     def get_object(self):
-        username = self.kwargs.get('username')  # Get the username from the URL
+        username = self.kwargs.get('username') 
         user = get_object_or_404(get_user_model(), username=username)
         return get_object_or_404(Budget, user=user)
     
@@ -292,15 +316,15 @@ class UserViewSet(viewsets.ModelViewSet):
 class SetBudgetMonthlyView(generics.CreateAPIView):
     queryset = BudgetMonthly.objects.all()
     serializer_class = BudgetMonthlySerializer
-    permission_classes = [permissions.IsAdminUser]  # Only admin can create budget monthly
+    permission_classes = [permissions.IsAdminUser] 
 
     def perform_create(self, serializer):
         budget = get_object_or_404(Budget, user=self.request.user)
         amount_per_month = budget.amount / 12
 
-        # Split the amount equally across all months
+      
         budget_monthly = BudgetMonthly.objects.create(
-            user=user,
+            user=User,
             january=amount_per_month,
             february=amount_per_month,
             march=amount_per_month,
@@ -315,7 +339,7 @@ class SetBudgetMonthlyView(generics.CreateAPIView):
             december=amount_per_month,
         )
         
-        # Calculate total_amount
+       
         budget_monthly.total_amount = (
             budget_monthly.january + budget_monthly.february + budget_monthly.march +
             budget_monthly.april + budget_monthly.may + budget_monthly.june +
@@ -323,7 +347,7 @@ class SetBudgetMonthlyView(generics.CreateAPIView):
             budget_monthly.october + budget_monthly.november + budget_monthly.december
         )
         
-        # Save the total amount
+        
         budget_monthly.save()
 
 
@@ -339,7 +363,7 @@ class ViewBudgetMonthlyView(generics.ListAPIView):
 class UpdateBudgetMonthlyView(generics.UpdateAPIView):
     queryset = BudgetMonthly.objects.all()
     serializer_class = BudgetMonthlySerializer
-    permission_classes = [permissions.IsAuthenticated]  # Allow authenticated users
+    permission_classes = [permissions.IsAuthenticated]  
 
     def get_object(self):
         username = self.kwargs.get('username')
@@ -347,11 +371,11 @@ class UpdateBudgetMonthlyView(generics.UpdateAPIView):
         return get_object_or_404(BudgetMonthly, user=user)
 
     def perform_update(self, serializer):
-        # Get the BudgetMonthly instance and Budget instance for the user
+       
         budget_monthly = self.get_object()
         budget = get_object_or_404(Budget, user=budget_monthly.user)
         
-        # Get the monthly amounts from the request data
+       
         monthly_data = {
             'january': self.request.data.get('january', budget_monthly.january),
             'february': self.request.data.get('february', budget_monthly.february),
@@ -367,16 +391,16 @@ class UpdateBudgetMonthlyView(generics.UpdateAPIView):
             'december': self.request.data.get('december', budget_monthly.december),
         }
 
-        # Calculate the total from the provided monthly values
+        
         total_provided = sum(monthly_data.values())
 
-        # Validate the total_provided matches the total_amount from the Budget model
+       
         if total_provided != budget.amount:
             raise serializers.ValidationError(
                 f"The sum of monthly amounts ({total_provided}) does not equal the budget amount ({budget.amount})."
             )
         
-        # If validation passes, update the BudgetMonthly instance
+       
         serializer.save(**monthly_data)
 
 
