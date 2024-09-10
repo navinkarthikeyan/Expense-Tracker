@@ -93,9 +93,15 @@ const useApi = () => {
       );
       toast.success("Expense Logged");
     } catch (err) {
-      toast.error("Failed to create expense");
+      // Check if the error response has the specific budget exceeding error
+      if (err.response && err.response.data && err.response.data.error) {
+        toast.error(err.response.data.error); // Display the error in a toast
+      } else {
+        toast.error("Failed to create expense");
+      }
     }
   };
+  
 
   return {
     categories,
