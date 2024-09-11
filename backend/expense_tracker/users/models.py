@@ -8,9 +8,11 @@ from django.conf import settings
 class CustomUser(AbstractUser,PermissionsMixin):
     USER = 'user'
     ADMIN = 'admin'
+    MEMBER = 'member'
     ROLE_CHOICES = [
         (USER, 'User'),
         (ADMIN, 'Admin'),
+        (MEMBER, 'Member')
     ]
     
     username = models.CharField(max_length=255, unique=True)

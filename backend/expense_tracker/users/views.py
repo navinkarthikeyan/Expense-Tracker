@@ -19,6 +19,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from django.db.models import Sum
+from .permissions import IsMemberOrAdmin
 
 
 User = get_user_model()
@@ -372,7 +373,7 @@ class ViewBudgetMonthlyView(generics.ListAPIView):
 class UpdateBudgetMonthlyView(generics.UpdateAPIView):
     queryset = BudgetMonthly.objects.all()
     serializer_class = BudgetMonthlySerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated, IsMemberOrAdmin]  
 
     def get_object(self):
         username = self.kwargs.get('username')

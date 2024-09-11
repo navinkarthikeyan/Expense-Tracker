@@ -240,6 +240,7 @@ const AdminDash = () => {
           >
             <MenuItem value="user">User</MenuItem>
             <MenuItem value="admin">Admin</MenuItem>
+            <MenuItem value="member">Member</MenuItem>
           </Select>
         </DialogContent>
         <DialogActions>

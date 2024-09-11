@@ -9,7 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LogExpense from "./views/home/components/LogExpense";
 import ViewBudget from "./views/home/components/ViewBudget";
 import SetBudget from "./views/dashboard/components/SetBudget";
-import Analytics from "./views/home/components/Analytics"
+import Analytics from "./views/home/components/Analytics";
 import Reports from "./views/dashboard/components/Reports";
 
 function App() {
@@ -26,15 +26,16 @@ function App() {
         <Route
           path="/home"
           element={
-            <ProtectedRoute requiredRole="user">
+            <ProtectedRoute requiredRole={["user", "member"]}>
               <Home />
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/home/log-expense"
           element={
-            <ProtectedRoute requiredRole="user">
+            <ProtectedRoute requiredRole={["user", "member"]}>
               <LogExpense />
             </ProtectedRoute>
           }
@@ -42,20 +43,18 @@ function App() {
         <Route
           path="/home/view-budget"
           element={
-            <ProtectedRoute requiredRole="user">
+            <ProtectedRoute requiredRole={["user", "member"]}>
               <ViewBudget />
             </ProtectedRoute>
           }
-          
         />
         <Route
           path="/home/analytics"
           element={
-            <ProtectedRoute requiredRole="user">
+            <ProtectedRoute requiredRole="member">
               <Analytics />
             </ProtectedRoute>
           }
-          
         />
         <Route
           path="/dashboard"

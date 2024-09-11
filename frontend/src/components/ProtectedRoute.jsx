@@ -22,9 +22,13 @@ const ProtectedRoute = ({ children, requiredRole = "user" }) => {
     return <Navigate to="/" />;
   }
 
-  if (requiredRole && requiredRole !== userData.role) {
-    console.log("no access");
-    return <NoAccess />;
+  const hasAccess = Array.isArray(requiredRole)
+  ? requiredRole.includes(userData.role)
+  : requiredRole === userData.role;
+
+  if (!hasAccess) {
+  console.log("no access");
+  return <NoAccess />;
   }
 
   return children;

@@ -37,6 +37,9 @@ const Login = () => {
         return navigate("/dashboard");
       case "user":
         return navigate("/home");
+      case "member":
+        return navigate("/home");
+      
       default:
         return;
     }
@@ -52,6 +55,14 @@ const Login = () => {
         setCookie("token", data?.token, { path: "/" });
         localStorage.setItem("token", data?.token);
         localStorage.setItem("username",username);
+
+
+        if (data?.role === "member") {
+          localStorage.setItem("ismember", "0x1"); // true as hex string
+        } else {
+          localStorage.setItem("ismember", "0x0"); // false as hex string
+        }
+
         handleRedirect(data?.role);
         return `Login successful! Role: ${data.role}`;
       },
