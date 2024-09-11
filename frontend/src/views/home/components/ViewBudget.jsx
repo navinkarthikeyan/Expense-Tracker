@@ -13,31 +13,40 @@ import {
   TextField,
 } from "@mui/material";
 import Sidebar from "../../sidebar/Sidebar";
-import useExpenses from "../../../api/useExpenses"; 
-import useBudget from "../../../api/useBudget"; 
+import useExpenses from "../../../api/useExpenses";
+import useBudget from "../../../api/useBudget";
 import axios from "axios";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
 const ViewBudget = () => {
-  const { expenses, error: expensesError } = useExpenses(); 
-  const { budget, error: budgetError } = useBudget(); 
+  const { expenses, error: expensesError } = useExpenses();
+  const { budget, error: budgetError } = useBudget();
   const [monthlyBudget, setMonthlyBudget] = useState({});
   const [originalBudget, setOriginalBudget] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  const [isMember, setIsMember] = useState(false); // Add state for isMember
 
+  // Fetch the membership status from local storage when component mounts
   useEffect(() => {
+    const isMemberHex = localStorage.getItem("ismember");
+    if (isMemberHex === "0x1") {
+      setIsMember(true); // Member (editable)
+    } else {
+      setIsMember(false); // Non-member (not editable)
+    }
+
     const fetchMonthlyBudget = async () => {
       try {
-        const token = localStorage.getItem("token"); 
+        const token = localStorage.getItem("token");
         const response = await axios.get(
           "http://127.0.0.1:8000/api/users/budget-monthly/view/",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        const budgetData = response.data[0]; 
+        const budgetData = response.data[0];
         setMonthlyBudget(budgetData);
-        setOriginalBudget(budgetData); 
+        setOriginalBudget(budgetData);
       } catch (error) {
         toast.error("Error fetching monthly budget");
       }
@@ -46,13 +55,13 @@ const ViewBudget = () => {
     fetchMonthlyBudget();
   }, []);
 
- 
   const totalAmount = expenses.reduce(
     (sum, expense) => sum + parseFloat(expense.amount) || 0,
     0
   );
 
   const handleEditChange = (month, value) => {
+    if (!isMember) return; // Prevent editing if the user is not a member
     setIsEditing(true);
     setMonthlyBudget((prev) => ({
       ...prev,
@@ -106,14 +115,13 @@ const ViewBudget = () => {
       );
       toast.success("Monthly budget updated successfully.");
       setIsEditing(false);
-     
+
       await fetchMonthlyBudget();
     } catch (error) {
-      
+      toast.error("Failed to update the budget.");
     }
   };
 
-  
   const rows = Object.entries(monthlyBudget)
     .filter(([month]) => month !== "user" && month !== "total_amount")
     .map(([month, amount]) => ({
@@ -121,7 +129,6 @@ const ViewBudget = () => {
       amount,
     }));
 
-  
   const hasChanges = Object.entries(monthlyBudget).some(
     ([month, amount]) => amount !== originalBudget[month]
   );
@@ -133,7 +140,7 @@ const ViewBudget = () => {
         width: "100vw",
         height: "100vh",
         display: "flex",
-        overflow: "hidden", 
+        overflow: "hidden",
       }}
     >
       <Sidebar menuItems={homeMenuItems} />
@@ -145,7 +152,7 @@ const ViewBudget = () => {
           color: "white",
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden", 
+          overflow: "hidden",
         }}
       >
         <Typography
@@ -176,12 +183,11 @@ const ViewBudget = () => {
           Total Budget Limit: ₹ {budget ? budget : "N/A"}
         </Typography>
 
-       
         {monthlyBudget && (
           <Box
             sx={{
               marginTop: "20px",
-              height: "calc(100vh - 350px)", 
+              height: "calc(100vh - 350px)",
               width: "100%",
               display: "flex",
               flexDirection: "column",
@@ -201,13 +207,12 @@ const ViewBudget = () => {
                 color: "white",
                 borderRadius: "4px",
                 boxShadow: "none",
-                flexGrow: 1, 
-                overflowY: "auto", 
+                flexGrow: 1,
+                overflowY: "auto",
                 marginBottom: hasChanges ? "80px" : "0px",
               }}
             >
               <Table stickyHeader>
-               
                 <TableHead>
                   <TableRow>
                     <TableCell
@@ -237,11 +242,12 @@ const ViewBudget = () => {
                       <TableCell sx={{ color: "white" }}>
                         <TextField
                           type="text"
-                          value={monthlyBudget[row.month] || row.amount}
+                          value={monthlyBudget[row.month.toLowerCase()] || row.amount}
                           onChange={(e) => {
                             const month = row.month.toLowerCase();
                             handleEditChange(month, e.target.value);
                           }}
+                          disabled={!isMember} // Disable input if not a member
                           InputProps={{
                             sx: {
                               color: "white",
@@ -257,12 +263,12 @@ const ViewBudget = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {hasChanges && (
+            {hasChanges && isMember && (
               <Box
                 sx={{
                   display: "flex",
                   justifyContent: "center",
-                  position: "absolute", 
+                  position: "absolute",
                   bottom: "20px",
                   left: 0,
                   right: 0,
