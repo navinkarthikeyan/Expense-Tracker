@@ -56,6 +56,7 @@ const ExpenseForm = () => {
     { label: 'View Expenses', path: '/home' },
     { label: 'Log Expense', path: '/home/log-expense' },
     { label: 'View Budget', path: '/home/view-budget' },
+    { label: 'Analytics', path: '/home/analytics' },
   ];
 
   const handleDeleteCategory = async (categoryId) => {

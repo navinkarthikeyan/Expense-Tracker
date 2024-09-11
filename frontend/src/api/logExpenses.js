@@ -5,7 +5,7 @@ import { toast } from "sonner";
 const useApi = () => {
   const [categories, setCategories] = useState([]);
 
-  // Memoize the fetchCategories function to prevent unnecessary re-renders
+  
   const fetchCategories = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
@@ -21,8 +21,7 @@ const useApi = () => {
     } catch (err) {
       toast.error("Failed to fetch categories");
     }
-  }, []); // Empty dependency array ensures this function is not recreated
-
+  }, []); 
   const addOrUpdateCategory = async (category, id = null) => {
     const token = localStorage.getItem("token");
     try {
@@ -49,7 +48,7 @@ const useApi = () => {
         );
         toast.success("Category added successfully");
       }
-      await fetchCategories(); // Refresh the category list after adding/updating
+      await fetchCategories(); 
     } catch (err) {
       toast.error("Failed to manage category");
     }
@@ -93,9 +92,9 @@ const useApi = () => {
       );
       toast.success("Expense Logged");
     } catch (err) {
-      // Check if the error response has the specific budget exceeding error
+     
       if (err.response && err.response.data && err.response.data.error) {
-        toast.error(err.response.data.error); // Display the error in a toast
+        toast.error(err.response.data.error); 
       } else {
         toast.error("Failed to create expense");
       }

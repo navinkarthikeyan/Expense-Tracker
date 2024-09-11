@@ -13,14 +13,14 @@ import {
   TextField,
 } from "@mui/material";
 import Sidebar from "../../sidebar/Sidebar";
-import useExpenses from "../../../api/useExpenses"; // Import the useExpenses hook
-import useBudget from "../../../api/useBudget"; // Import the useBudget hook
+import useExpenses from "../../../api/useExpenses"; 
+import useBudget from "../../../api/useBudget"; 
 import axios from "axios";
-import { toast } from "sonner"; // Import toast from sonner
+import { toast } from "sonner"; 
 
 const ViewBudget = () => {
-  const { expenses, error: expensesError } = useExpenses(); // Fetch expenses
-  const { budget, error: budgetError } = useBudget(); // Fetch budget limit
+  const { expenses, error: expensesError } = useExpenses(); 
+  const { budget, error: budgetError } = useBudget(); 
   const [monthlyBudget, setMonthlyBudget] = useState({});
   const [originalBudget, setOriginalBudget] = useState({});
   const [isEditing, setIsEditing] = useState(false);
@@ -28,16 +28,16 @@ const ViewBudget = () => {
   useEffect(() => {
     const fetchMonthlyBudget = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get the token from local storage
+        const token = localStorage.getItem("token"); 
         const response = await axios.get(
           "http://127.0.0.1:8000/api/users/budget-monthly/view/",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        const budgetData = response.data[0]; // Assuming the response is an array with one object
+        const budgetData = response.data[0]; 
         setMonthlyBudget(budgetData);
-        setOriginalBudget(budgetData); // Store the original budget for comparison
+        setOriginalBudget(budgetData); 
       } catch (error) {
         toast.error("Error fetching monthly budget");
       }
@@ -46,7 +46,7 @@ const ViewBudget = () => {
     fetchMonthlyBudget();
   }, []);
 
-  // Calculate total sum of all expenses
+ 
   const totalAmount = expenses.reduce(
     (sum, expense) => sum + parseFloat(expense.amount) || 0,
     0
@@ -56,7 +56,7 @@ const ViewBudget = () => {
     setIsEditing(true);
     setMonthlyBudget((prev) => ({
       ...prev,
-      [month]: parseInt(value) || 0, // Ensure float value
+      [month]: parseInt(value) || 0,
     }));
   };
 
@@ -64,29 +64,36 @@ const ViewBudget = () => {
     { label: "View Expenses", path: "/home" },
     { label: "Log Expense", path: "/home/log-expense" },
     { label: "View Budget", path: "/home/view-budget" },
+    { label: "Analytics", path: "/home/analytics" },
   ];
 
   const handleSubmit = async () => {
-    // Filter out keys corresponding to months (January to December) and sum their values
     const months = [
-      "january", "february", "march", "april", "may", "june", 
-      "july", "august", "september", "october", "november", "december"
+      "january",
+      "february",
+      "march",
+      "april",
+      "may",
+      "june",
+      "july",
+      "august",
+      "september",
+      "october",
+      "november",
+      "december",
     ];
-  
+
     const totalBudget = months.reduce((sum, month) => {
       return sum + (parseInt(monthlyBudget[month]) || 0);
     }, 0);
-  
-    console.log(totalBudget);
-    console.log(budget);
-  
+
     if (totalBudget !== budget) {
       toast.error(
         "The total of all monthly amounts does not match the budget limit."
       );
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
       const username = localStorage.getItem("username");
@@ -99,15 +106,14 @@ const ViewBudget = () => {
       );
       toast.success("Monthly budget updated successfully.");
       setIsEditing(false);
-      // Re-fetch the budget to get updated data
+     
       await fetchMonthlyBudget();
     } catch (error) {
       toast.error("Error updating monthly budget");
     }
   };
-  
 
-  // Check for changes and ensure no duplicate months
+  
   const rows = Object.entries(monthlyBudget)
     .filter(([month]) => month !== "user" && month !== "total_amount")
     .map(([month, amount]) => ({
@@ -115,7 +121,7 @@ const ViewBudget = () => {
       amount,
     }));
 
-  // Determine if there are changes to show the submit button
+  
   const hasChanges = Object.entries(monthlyBudget).some(
     ([month, amount]) => amount !== originalBudget[month]
   );
@@ -127,6 +133,7 @@ const ViewBudget = () => {
         width: "100vw",
         height: "100vh",
         display: "flex",
+        overflow: "hidden", 
       }}
     >
       <Sidebar menuItems={homeMenuItems} />
@@ -138,6 +145,7 @@ const ViewBudget = () => {
           color: "white",
           display: "flex",
           flexDirection: "column",
+          overflow: "hidden", 
         }}
       >
         <Typography
@@ -168,9 +176,17 @@ const ViewBudget = () => {
           Total Budget Limit: ₹ {budget ? budget : "N/A"}
         </Typography>
 
-        {/* Display Monthly Budget */}
+       
         {monthlyBudget && (
-          <Box sx={{ marginTop: "20px", height: "550px", width: "100%" }}>
+          <Box
+            sx={{
+              marginTop: "20px",
+              height: "calc(100vh - 350px)", 
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <Typography
               variant="h6"
               gutterBottom
@@ -185,15 +201,31 @@ const ViewBudget = () => {
                 color: "white",
                 borderRadius: "4px",
                 boxShadow: "none",
+                flexGrow: 1, 
+                overflowY: "auto", 
+                marginBottom: hasChanges ? "80px" : "0px",
               }}
             >
-              <Table>
+              <Table stickyHeader>
+               
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                    <TableCell
+                      sx={{
+                        color: "white",
+                        fontWeight: "bold",
+                        backgroundColor: "#333",
+                      }}
+                    >
                       Month
                     </TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                    <TableCell
+                      sx={{
+                        color: "white",
+                        fontWeight: "bold",
+                        backgroundColor: "#333",
+                      }}
+                    >
                       Amount ₹
                     </TableCell>
                   </TableRow>
@@ -230,7 +262,10 @@ const ViewBudget = () => {
                 sx={{
                   display: "flex",
                   justifyContent: "center",
-                  marginTop: "20px",
+                  position: "absolute", 
+                  bottom: "20px",
+                  left: 0,
+                  right: 0,
                 }}
               >
                 <Button

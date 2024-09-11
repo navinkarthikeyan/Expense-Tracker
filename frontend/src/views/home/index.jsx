@@ -5,7 +5,7 @@ import Footer from './components/Footer';
 import ExpenseDialog from './components/ExpenseDialog';
 import ExpenseFilters from './components/ExpenseFilters';
 import ExpenseTable from './components/ExpenseTable';
-import useExpenses from '../../api/useExpenses'; // Import hook
+import useExpenses from '../../api/useExpenses'; 
 
 const Home = () => {
   const { expenses, error, handleDeleteExpense, handleUpdateExpense } = useExpenses();
@@ -51,13 +51,14 @@ const Home = () => {
       } else if (amountSort === 'desc') {
         return b.amount - a.amount;
       }
-      return 0; // Default sorting (no sorting)
+      return 0; 
     });
 
   const homeMenuItems = [
     { label: 'View Expenses', path: '/home' },
     { label: 'Log Expense', path: '/home/log-expense' },
     { label: 'View Budget', path: '/home/view-budget' },
+    { label: 'Analytics', path: '/home/analytics' },
   ];
 
   return (

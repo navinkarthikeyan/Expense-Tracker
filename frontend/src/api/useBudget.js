@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "sonner"; // assuming you are using sonner for toast notifications
+import { toast } from "sonner"; 
 
 const useBudget = () => {
   const [budget, setBudget] = useState(null);
@@ -26,7 +26,7 @@ const useBudget = () => {
           }
         );
         if (response.data.length > 0) {
-          const { amount } = response.data[0]; // Extract the amount from the first budget object
+          const { amount } = response.data[0]; 
           console.log(amount);
           setBudget(amount);
 

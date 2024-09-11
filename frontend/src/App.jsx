@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LogExpense from "./views/home/components/LogExpense";
 import ViewBudget from "./views/home/components/ViewBudget";
 import SetBudget from "./views/dashboard/components/SetBudget";
+import Analytics from "./views/home/components/Analytics"
 
 function App() {
   return (
@@ -44,6 +45,16 @@ function App() {
               <ViewBudget />
             </ProtectedRoute>
           }
+          
+        />
+        <Route
+          path="/home/analytics"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <Analytics />
+            </ProtectedRoute>
+          }
+          
         />
         <Route
           path="/dashboard"
