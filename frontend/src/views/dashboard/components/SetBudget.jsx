@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../../sidebar/Sidebar";
-import { Box, Typography, Button, FormControl, InputLabel, Input } from "@mui/material";
+import { Box, Typography, Button, TextField } from "@mui/material";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -28,7 +28,7 @@ const SetBudget = () => {
 
       const response = await axios.put(
         `http://127.0.0.1:8000/api/users/budgets/update/${username}/`,
-        { amount: parseFloat(amount) }, 
+        { amount: parseFloat(amount) },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,12 +37,12 @@ const SetBudget = () => {
       );
 
       if (response.status === 200) {
-        setMessage("Budget updated successfully!");
         toast.success("Budget updated successfully!");
+        setError(""); // Clear any previous error
       }
     } catch (error) {
       console.error("Error updating budget:", error);
-      setMessage("Failed to update budget. Please try again.");
+      setMessage("");
       toast.error("Failed to update budget.");
     }
   };
@@ -50,93 +50,124 @@ const SetBudget = () => {
   return (
     <Box
       sx={{
-        background: "black",
+        backgroundColor: "black",
         width: "100vw",
         height: "100vh",
         display: "flex",
         flexDirection: "column",
+        color: "white",
       }}
     >
-      <Box
-        className="dashboard"
-        sx={{
-          flexGrow: 1,
-          padding: "20px",
-          color: "white",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <Box sx={{ flexGrow: 1, display: "flex" }}>
         <Sidebar menuItems={adminMenuItems} />
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{ display: "flex", justifyContent: "center" }}
-        >
-          Set Budget
-        </Typography>
-
         <Box
-          component="form"
           sx={{
+            flexGrow: 1,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-          }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSetBudget();
+            justifyContent: "center",
+            padding: "20px",
+            maxWidth: "600px",
+            margin: "0 auto",
           }}
         >
-          <FormControl variant="outlined" sx={{ marginBottom: "20px", width: "300px" }}>
-            <InputLabel htmlFor="username" sx={{ color: "white" }}>Username</InputLabel>
-            <Input
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{ color: "#fff", fontWeight: 500, marginBottom: "30px" }}
+          >
+            Set Budget
+          </Typography>
+
+          <Box
+            component="form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSetBudget();
+            }}
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              backgroundColor: "#2e2e2e",
+              padding: "40px",
+              borderRadius: "8px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <TextField
               id="username"
+              label="Username"
+              variant="outlined"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              sx={{ color: "white", '& .MuiInputBase-input': { color: 'white' }, '& .MuiFormLabel-root': { color: 'white' }}}
+              fullWidth
+              InputLabelProps={{ style: { color: "#888" } }}
+              InputProps={{
+                style: { color: "#fff" },
+              }}
+              
             />
-          </FormControl>
-          
-          <FormControl variant="outlined" sx={{ marginBottom: "20px", width: "300px" }}>
-            <InputLabel htmlFor="amount" sx={{ color: "white" }}>Amount</InputLabel>
-            <Input
+
+            <TextField
               id="amount"
+              label="Amount"
+              variant="outlined"
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              sx={{ color: "white", '& .MuiInputBase-input': { color: 'white' }, '& .MuiFormLabel-root': { color: 'white' }}}
+              fullWidth
+              InputLabelProps={{ style: { color: "#888" } }}
+              InputProps={{
+                style: { color: "#fff" },
+              }}
+              
             />
-          </FormControl>
-          
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ marginBottom: "20px" }}
-          >
-            Set Budget
-          </Button>
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                padding: "10px 0",
+                borderRadius: "4px",
+                fontSize: "16px",
+                fontWeight: 500,
+              }}
+            >
+              Set Budget
+            </Button>
+          </Box>
+
           {message && (
-            <Typography variant="body1" sx={{ color: "white" }}>
+            <Typography
+              variant="body1"
+              sx={{ color: "#4caf50", marginTop: "20px" }}
+            >
               {message}
             </Typography>
           )}
+
           {error && (
-            <Typography variant="body1" sx={{ color: "red" }}>
+            <Typography
+              variant="body1"
+              sx={{ color: "#f44336", marginTop: "20px" }}
+            >
               {error}
             </Typography>
           )}
-        </Box>
 
-        {budget && (
-          <Typography
-            variant="body1"
-            sx={{ color: "white", textAlign: "center", marginTop: "20px" }}
-          >
-            Current Budget: ${budget}
-          </Typography>
-        )}
+          {budget && (
+            <Typography
+              variant="body1"
+              sx={{ color: "#fff", marginTop: "20px" }}
+            >
+              Current Budget: ${budget}
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Box>
   );

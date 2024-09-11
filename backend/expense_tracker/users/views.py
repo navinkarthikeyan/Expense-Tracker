@@ -360,6 +360,7 @@ class ViewBudgetMonthlyView(generics.ListAPIView):
         return BudgetMonthly.objects.filter(user=self.request.user)
 
 
+
 class UpdateBudgetMonthlyView(generics.UpdateAPIView):
     queryset = BudgetMonthly.objects.all()
     serializer_class = BudgetMonthlySerializer
@@ -368,14 +369,17 @@ class UpdateBudgetMonthlyView(generics.UpdateAPIView):
     def get_object(self):
         username = self.kwargs.get('username')
         user = get_object_or_404(get_user_model(), username=username)
+
+        # Ensure that the authenticated user is the same as the requested user
+        if self.request.user != user:
+            raise serializers.ValidationError("You are not allowed to update another user's budget.")
+        
         return get_object_or_404(BudgetMonthly, user=user)
 
     def perform_update(self, serializer):
-       
         budget_monthly = self.get_object()
         budget = get_object_or_404(Budget, user=budget_monthly.user)
-        
-       
+
         monthly_data = {
             'january': self.request.data.get('january', budget_monthly.january),
             'february': self.request.data.get('february', budget_monthly.february),
@@ -391,17 +395,16 @@ class UpdateBudgetMonthlyView(generics.UpdateAPIView):
             'december': self.request.data.get('december', budget_monthly.december),
         }
 
-        
         total_provided = sum(monthly_data.values())
 
-       
+        # Ensure the total matches the budget amount
         if total_provided != budget.amount:
             raise serializers.ValidationError(
                 f"The sum of monthly amounts ({total_provided}) does not equal the budget amount ({budget.amount})."
             )
-        
-       
+
         serializer.save(**monthly_data)
+
 
 
 

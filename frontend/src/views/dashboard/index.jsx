@@ -2,14 +2,30 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../sidebar/Sidebar";
 import { useDispatch } from "react-redux";
 import { clearUserData } from "../../redux/user/slice";
-import { Box, Typography, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Container,
+  Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@mui/material";
 import Footer from "../home/components/Footer";
 import axios from "axios";
+import { DataGrid } from "@mui/x-data-grid";
 
 const AdminDash = () => {
   const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null); 
+  const [newRole, setNewRole] = useState(""); 
+  const [open, setOpen] = useState(false); 
 
   const handleLogout = () => {
     console.log("logout");
@@ -46,39 +62,84 @@ const AdminDash = () => {
     fetchUsers();
   }, []);
 
-  const handleRoleChange = async (userId, newRole) => {
-    try {
-        const token = localStorage.getItem("token");
-        const updatedFields = { 
-            role: newRole,
-            is_active: newRole === 'admin' ? true : undefined,
-            is_staff: newRole === 'admin' ? true : false,
-            is_superuser: newRole === 'admin' ? true : false,
-        };
-        
-        await axios.patch(
-            `http://127.0.0.1:8000/api/users/users/${userId}/`,
-            updatedFields,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-        
-        setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-                user.id === userId ? { ...user, role: newRole, ...updatedFields } : user
-            )
-        );
-    } catch (error) {
-        console.error("Error updating user role:", error);
-    }
+  const handleOpenDialog = (user) => {
+    setSelectedUser(user);
+    setNewRole(user.role);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setSelectedUser(null);
+    setNewRole("");
   };
 
   const adminMenuItems = [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Set Budget", path: "/dashboard/set-budget" },
+  ];
+
+  const handleRoleChange = async () => {
+    if (!selectedUser) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const updatedFields = {
+        role: newRole,
+        is_active: newRole === "admin" ? true : undefined,
+        is_staff: newRole === "admin" ? true : false,
+        is_superuser: newRole === "admin" ? true : false,
+      };
+
+      await axios.patch(
+        `http://127.0.0.1:8000/api/users/users/${selectedUser.id}/`,
+        updatedFields,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === selectedUser.id
+            ? { ...user, role: newRole, ...updatedFields }
+            : user
+        )
+      );
+
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Error updating user role:", error);
+    }
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", flex: 1 },
+    { field: "username", headerName: "Username", flex: 1 },
+    { field: "role", headerName: "Role", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Change Role",
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          onClick={() => handleOpenDialog(params.row)}
+          sx={{
+            backgroundColor: "#1a1a1a",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "#333",
+            },
+          }}
+        >
+          Change Role
+        </Button>
+      ),
+    },
   ];
 
   return (
@@ -91,23 +152,25 @@ const AdminDash = () => {
         flexDirection: "column",
       }}
     >
-      <Box
-        className="dashboard"
+      <Sidebar menuItems={adminMenuItems} />
+      <Container
+        component={Paper}
+        elevation={3}
         sx={{
-          flexGrow: 1,
+          margin: "auto",
           padding: "20px",
+          maxWidth: "800px",
           color: "white",
-          display: "flex",
-          flexDirection: "column",
+          backgroundColor: "#1a1a1a",
+          borderRadius: "8px",
         }}
       >
-        <Sidebar menuItems={adminMenuItems} />
         <Typography
           variant="h4"
           gutterBottom
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          Admin Dashboard
+          Manage Role
         </Typography>
 
         {loading ? (
@@ -115,58 +178,82 @@ const AdminDash = () => {
             Loading users...
           </Typography>
         ) : (
-          <Box>
-            <Typography variant="h6">Registered Users</Typography>
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Username</th>
-                  <th>Role</th>
-                  <th>Change Role</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td>{user.username}</td>
-                    <td>{user.role}</td>
-                    <td>
-                      <Select
-                        value={user.role}
-                        onChange={(e) =>
-                          handleRoleChange(user.id, e.target.value)
-                        }
-                        sx={{
-                          color: "white", // Set text color to white
-                          '.MuiOutlinedInput-notchedOutline': {
-                            borderColor: "white", // Set border color to white
-                          },
-                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "white", // White border when focused
-                          },
-                          ".MuiSvgIcon-root": {
-                            color: "white", // White arrow icon color
-                          },
-                        }}
-                      >
-                        <MenuItem value="user" sx={{ color: "black" }}> {/* Set text color */}
-                          User
-                        </MenuItem>
-                        <MenuItem value="admin" sx={{ color: "black" }}>
-                          Admin
-                        </MenuItem>
-                      </Select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <Box
+            sx={{
+              height: "550px",
+              width: "100%",
+              backgroundColor: "#1a1a1a",
+              borderRadius: "4px",
+              "& .MuiDataGrid-cell": {
+                color: "white",
+                borderRight: "1px solid #444",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#333",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                backgroundColor: "#333",
+              },
+              "& .MuiTablePagination-displayedRows": {
+                color: "white",
+              },
+              "& .MuiTablePagination-selectLabel": {
+                color: "white",
+              },
+              "& .MuiTablePagination-input": {
+                color: "white",
+              },
+            }}
+          >
+            <DataGrid
+              rows={users}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              getRowId={(row) => row.id}
+              disableSelectionOnClick
+              checkboxSelection={false}
+              hideFooterSelectedRowCount
+            />
           </Box>
         )}
-      </Box>
+      </Container>
+
       <Footer />
+
+    
+      <Dialog open={open} onClose={handleCloseDialog}>
+        <DialogTitle>Change Role</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Change role for {selectedUser?.username}
+          </Typography>
+          <Select
+            value={newRole}
+            onChange={(e) => setNewRole(e.target.value)}
+            fullWidth
+            sx={{
+              marginTop: "10px",
+              color: "black",
+            }}
+          >
+            <MenuItem value="user">User</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
+          </Select>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleRoleChange}
+            color="primary"
+            variant="contained"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
