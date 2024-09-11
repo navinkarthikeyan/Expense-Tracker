@@ -109,7 +109,7 @@ const ViewBudget = () => {
      
       await fetchMonthlyBudget();
     } catch (error) {
-      toast.error("Error updating monthly budget");
+      
     }
   };
 

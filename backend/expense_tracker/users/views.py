@@ -154,7 +154,15 @@ class ExpenseListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Expense.objects.filter(user=self.request.user)
+        user = self.request.user
+
+        # Check if the user is an admin
+        if user.is_superuser or (hasattr(user, 'role') and user.role == 'admin'):
+            # If the user is admin, return all expenses
+            return Expense.objects.all()
+        else:
+            # If the user is not admin, return only their own expenses
+            return Expense.objects.filter(user=user)
 
 class ExpenseUpdateView(generics.UpdateAPIView):
     serializer_class = ExpenseSerializer

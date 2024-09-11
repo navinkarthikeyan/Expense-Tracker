@@ -77,6 +77,7 @@ const AdminDash = () => {
   const adminMenuItems = [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Set Budget", path: "/dashboard/set-budget" },
+    { label: "Reports", path: "/dashboard/reports" },
   ];
 
   const handleRoleChange = async () => {

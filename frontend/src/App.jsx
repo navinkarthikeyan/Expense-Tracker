@@ -10,6 +10,7 @@ import LogExpense from "./views/home/components/LogExpense";
 import ViewBudget from "./views/home/components/ViewBudget";
 import SetBudget from "./views/dashboard/components/SetBudget";
 import Analytics from "./views/home/components/Analytics"
+import Reports from "./views/dashboard/components/Reports";
 
 function App() {
   return (
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <SetBudget></SetBudget>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/reports"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Reports />
             </ProtectedRoute>
           }
         />

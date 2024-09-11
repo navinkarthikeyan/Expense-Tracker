@@ -60,6 +60,15 @@ const Index = () => {
       }
     };
 
+    const generateRandomColor = () => {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    };
+
     const processBarChartData = (expenses) => {
       const categories = [];
       const amounts = [];
@@ -98,21 +107,16 @@ const Index = () => {
         months[month] = (months[month] || 0) + amount;
       });
 
+      const colors = Object.keys(months).map(() => generateRandomColor());
+
       setPieChartData({
         labels: Object.keys(months),
         datasets: [
           {
             label: "Total Expenses by Month",
             data: Object.values(months),
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.6)",
-              "rgba(54, 162, 235, 0.6)",
-              "rgba(255, 206, 86, 0.6)",
-              "rgba(75, 192, 192, 0.6)",
-              "rgba(153, 102, 255, 0.6)",
-              "rgba(255, 159, 64, 0.6)",
-            ],
-            borderColor: "rgba(255, 255, 255, 1)",
+            backgroundColor: colors,
+            borderColor: colors.map(color => color.replace('#', 'rgba(').replace(')', ', 1)') + ')'),
             borderWidth: 1,
           },
         ],
@@ -181,20 +185,20 @@ const Index = () => {
               flexGrow: 1,
               alignItems: "center",
               justifyContent: "center",
-              gap: "20px", 
+              gap: "20px",
             }}
           >
             {barChartData && (
               <Box
                 sx={{
                   width: "100%",
-                  maxWidth: "800px", 
-                  height: "400px", 
+                  maxWidth: "800px",
+                  height: "400px",
                   backgroundColor: "#1E1E1E",
-                  padding: "15px", 
+                  padding: "15px",
                   borderRadius: "10px",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  border: "1px solid #333", 
+                  border: "1px solid #333",
                 }}
               >
                 <Bar
@@ -238,13 +242,13 @@ const Index = () => {
                   display: "flex",
                   flexDirection: "row",
                   width: "100%",
-                  maxWidth: "800px", 
-                  height: "400px", 
+                  maxWidth: "800px",
+                  height: "400px",
                   backgroundColor: "#1E1E1E",
-                  padding: "15px", 
+                  padding: "15px",
                   borderRadius: "10px",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  border: "1px solid #333", 
+                  border: "1px solid #333",
                 }}
               >
                 <Box
@@ -287,17 +291,27 @@ const Index = () => {
                   }}
                 >
                   {pieChartData.labels.map((label, index) => (
-                    <Box key={label} sx={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                    <Box
+                      key={label}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
                       <Box
                         sx={{
-                          width: "25px", 
-                          height: "25px", 
-                          backgroundColor: pieChartData.datasets[0].backgroundColor[index],
+                          width: "25px",
+                          height: "25px",
+                          backgroundColor:
+                            pieChartData.datasets[0].backgroundColor[index],
                           borderRadius: "50%",
                           marginRight: "10px",
                         }}
                       />
-                      <Typography variant="body2">{label}: {pieChartData.datasets[0].data[index]}</Typography>
+                      <Typography variant="body2">
+                        {label}: {pieChartData.datasets[0].data[index]}
+                      </Typography>
                     </Box>
                   ))}
                 </Box>
