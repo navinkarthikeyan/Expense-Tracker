@@ -7,7 +7,7 @@ import { clearUserData } from "../../redux/user/slice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ menuItems = [] }) => { // Set default value to an empty array
+const Sidebar = ({ menuItems = [] }) => { 
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -15,6 +15,8 @@ const Sidebar = ({ menuItems = [] }) => { // Set default value to an empty array
 
   const handleLogout = () => {
     console.log("logout");
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
     removeCookie("token");
     dispatch(clearUserData());
     toast.success("Logout successful");
