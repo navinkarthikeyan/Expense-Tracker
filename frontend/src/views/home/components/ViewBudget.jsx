@@ -16,7 +16,7 @@ const ViewBudget = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isMember, setIsMember] = useState(false);
 
-  // Fetch expenses from the API and calculate total monthly spending
+  
   const fetchMonthlySpending = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -27,7 +27,7 @@ const ViewBudget = () => {
         }
       );
 
-      // Group expenses by month and sum amounts for each month
+      
       const spendingByMonth = response.data.reduce((acc, expense) => {
         const month = new Date(expense.date)
           .toLocaleString("default", {
@@ -38,7 +38,7 @@ const ViewBudget = () => {
         return acc;
       }, {});
 
-      // Fill in months with 0 if no expenses exist for that month
+      
       const months = [
         "january",
         "february",
@@ -86,7 +86,7 @@ const ViewBudget = () => {
     };
 
     fetchMonthlyBudget();
-    fetchMonthlySpending(); // Fetch monthly spending
+    fetchMonthlySpending();
   }, []);
 
   const totalAmount = expenses.reduce(
@@ -143,7 +143,7 @@ const ViewBudget = () => {
           } must be greater than the current spending of ₹ ${spendingAmount}.`
         );
 
-        // Reset to original budget values
+       
         setMonthlyBudget(originalBudget);
         setIsEditing(false);
         return;
