@@ -12,17 +12,14 @@ const CategoryManagementForm = ({
       label={isEditing ? "Edit Category" : "Add Category"}
       type="text"
       fullWidth
+      variant="filled"
       value={newCategory}
       onChange={(e) => setNewCategory(e.target.value)}
       required
       sx={{
+        backgroundColor: "white",
+        borderRadius: "4px",
         marginBottom: "20px",
-        "& .MuiInputBase-input": {
-          color: "white",
-        },
-        "& .MuiFormLabel-root": {
-          color: "white",
-        },
       }}
     />
     <Button

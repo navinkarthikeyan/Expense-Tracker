@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button, TextField, Grid } from "@mui/material";
+import { Box, Typography, Button, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import Sidebar from "../../sidebar/Sidebar";
 import useExpenses from "../../../api/useExpenses";
@@ -12,8 +12,57 @@ const ViewBudget = () => {
   const { budget, error: budgetError } = useBudget();
   const [monthlyBudget, setMonthlyBudget] = useState({});
   const [originalBudget, setOriginalBudget] = useState({});
+  const [monthlySpending, setMonthlySpending] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [isMember, setIsMember] = useState(false);
+
+  // Fetch expenses from the API and calculate total monthly spending
+  const fetchMonthlySpending = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/users/expenses/",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Group expenses by month and sum amounts for each month
+      const spendingByMonth = response.data.reduce((acc, expense) => {
+        const month = new Date(expense.date)
+          .toLocaleString("default", {
+            month: "long",
+          })
+          .toLowerCase();
+        acc[month] = (acc[month] || 0) + parseFloat(expense.amount);
+        return acc;
+      }, {});
+
+      // Fill in months with 0 if no expenses exist for that month
+      const months = [
+        "january",
+        "february",
+        "march",
+        "april",
+        "may",
+        "june",
+        "july",
+        "august",
+        "september",
+        "october",
+        "november",
+        "december",
+      ];
+      const completeSpending = months.reduce((acc, month) => {
+        acc[month] = spendingByMonth[month] || 0;
+        return acc;
+      }, {});
+
+      setMonthlySpending(completeSpending);
+    } catch (error) {
+      toast.error("Error fetching expenses.");
+    }
+  };
 
   useEffect(() => {
     const isMemberHex = localStorage.getItem("ismember");
@@ -37,6 +86,7 @@ const ViewBudget = () => {
     };
 
     fetchMonthlyBudget();
+    fetchMonthlySpending(); // Fetch monthly spending
   }, []);
 
   const totalAmount = expenses.reduce(
@@ -77,7 +127,27 @@ const ViewBudget = () => {
       toast.error(
         "The total of all monthly amounts does not match the budget limit."
       );
+      setMonthlyBudget(originalBudget);
+      setIsEditing(false);
       return;
+    }
+
+    for (const month of months) {
+      const budgetAmount = parseInt(monthlyBudget[month]) || 0;
+      const spendingAmount = monthlySpending[month] || 0;
+
+      if (budgetAmount < spendingAmount) {
+        toast.error(
+          `The budget for ${
+            month.charAt(0).toUpperCase() + month.slice(1)
+          } must be greater than the current spending of ₹ ${spendingAmount}.`
+        );
+
+        // Reset to original budget values
+        setMonthlyBudget(originalBudget);
+        setIsEditing(false);
+        return;
+      }
     }
 
     try {
@@ -93,9 +163,11 @@ const ViewBudget = () => {
       toast.success("Monthly budget updated successfully.");
       setIsEditing(false);
 
-      await fetchMonthlyBudget();
+      setTimeout(async () => {
+        await fetchMonthlyBudget();
+      }, 500);
     } catch (error) {
-      // toast.error("Failed to update the budget.");
+      toast.error("Failed to update the budget.");
     }
   };
 
@@ -105,23 +177,56 @@ const ViewBudget = () => {
       field: "amount",
       headerName: "Amount ₹",
       flex: 1,
-      renderCell: (params) => (
-        <TextField
-          type="text"
-          value={monthlyBudget[params.row.month.toLowerCase()] || params.value}
-          onChange={(e) =>
-            handleEditChange(params.row.month.toLowerCase(), e.target.value)
-          }
-          disabled={!isMember}
-          InputProps={{
-            sx: {
+      renderCell: (params) => {
+        const amount =
+          monthlyBudget[params.row.month.toLowerCase()] || params.value;
+
+        return isMember ? (
+          <TextField
+            type="text"
+            value={amount}
+            onChange={(e) =>
+              handleEditChange(params.row.month.toLowerCase(), e.target.value)
+            }
+            disabled={!isMember}
+            InputProps={{
+              sx: {
+                color: "white",
+                backgroundColor: "#333",
+                borderRadius: "4px",
+              },
+            }}
+            sx={{ width: "100%" }}
+          />
+        ) : (
+          <Typography
+            sx={{
               color: "white",
-              backgroundColor: "#333",
-              borderRadius: "4px",
-            },
+              display: "flex",
+              alignItems: "center",
+              paddingTop: "15px",
+            }}
+          >
+            {amount}
+          </Typography>
+        );
+      },
+    },
+    {
+      field: "spending",
+      headerName: "Current Monthly Spending ₹ ",
+      flex: 1,
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            paddingTop: "15px",
           }}
-          sx={{ width: "100%" }}
-        />
+        >
+          {monthlySpending[params.row.month.toLowerCase()] || 0}
+        </Typography>
       ),
     },
   ];
@@ -149,7 +254,9 @@ const ViewBudget = () => {
           { label: "View Expenses", path: "/home" },
           { label: "Log Expense", path: "/home/log-expense" },
           { label: "View Budget", path: "/home/view-budget" },
-          { label: "Analytics", path: "/home/analytics" },
+          ...(isMember
+            ? [{ label: "Analytics", path: "/home/analytics" }]
+            : []),
         ]}
       />
       <Box
@@ -160,7 +267,6 @@ const ViewBudget = () => {
           color: "white",
           display: "flex",
           flexDirection: "column",
-          overflowY: "auto", // To handle overflow on small screens
         }}
       >
         <Typography
@@ -241,7 +347,11 @@ const ViewBudget = () => {
               marginTop: "20px",
             }}
           >
-            <Button variant="contained" color="secondary" onClick={handleSubmit}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleSubmit}
+            >
               Submit
             </Button>
           </Box>

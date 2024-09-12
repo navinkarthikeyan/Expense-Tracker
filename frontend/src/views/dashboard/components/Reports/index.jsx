@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../../sidebar/Sidebar";
-import { Box, Container, Typography, Paper, List, ListItem, ListItemText, Button } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+} from "@mui/material";
 import { Pie } from "react-chartjs-2";
 import axios from "axios";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -24,11 +33,14 @@ const Reports = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://127.0.0.1:8000/api/users/expenses/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/users/expenses/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         setExpenseData(response.data);
         setLoading(false);
@@ -44,7 +56,7 @@ const Reports = () => {
   const aggregateExpensesByCategory = (expenses) => {
     const categoryTotals = {};
 
-    expenses.forEach(expense => {
+    expenses.forEach((expense) => {
       const { category, amount } = expense;
       if (categoryTotals[category]) {
         categoryTotals[category] += amount;
@@ -57,8 +69,8 @@ const Reports = () => {
   };
 
   const generateRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
+    const letters = "0123456789ABCDEF";
+    let color = "#";
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
@@ -76,7 +88,7 @@ const Reports = () => {
         label: "Spending by Category",
         data: Object.values(categoryTotals),
         backgroundColor: colors,
-        borderColor: colors.map(color => color.replace('0.6', '1')),
+        borderColor: colors.map((color) => color.replace("0.6", "1")),
         borderWidth: 1,
       },
     ],
@@ -98,79 +110,72 @@ const Reports = () => {
 
   const handleDownloadReport = async () => {
     const chartCanvas = chartRef.current;
-  
+
     if (chartCanvas) {
       const canvas = await html2canvas(chartCanvas, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-  
+
       const pdf = new jsPDF();
-      
-     
+
       pdf.setFontSize(22);
-      pdf.setTextColor(40, 44, 52); 
-      pdf.text("Expense Report", 105, 20, null, null, "center"); 
-  
-     
+      pdf.setTextColor(40, 44, 52);
+      pdf.text("Expense Report", 105, 20, null, null, "center");
+
       pdf.setFontSize(14);
       pdf.setTextColor(100);
-      pdf.text("Overview of spending by category", 105, 28, null, null, "center");
-  
-      
+      pdf.text(
+        "Overview of spending by category",
+        105,
+        28,
+        null,
+        null,
+        "center"
+      );
+
       pdf.setLineWidth(0.5);
-      pdf.setDrawColor(150); 
+      pdf.setDrawColor(150);
       pdf.line(15, 35, 195, 35);
-  
-     
-      pdf.addImage(imgData, "PNG", 25, 40, 160, 90); 
-      
-      
+
+      pdf.addImage(imgData, "PNG", 60, 40, 90, 90);
+
       pdf.setFontSize(12);
       pdf.setTextColor(40, 44, 52);
       pdf.text("Spending by Category", 15, 140);
-  
-      
+
       pdf.line(15, 142, 195, 142);
-  
-      
+
       pdf.setFontSize(11);
-      pdf.setFillColor(230, 230, 230); 
-      pdf.rect(15, 145, 40, 10, "F"); 
+      pdf.setFillColor(230, 230, 230);
+      pdf.rect(15, 145, 40, 10, "F");
       pdf.rect(55, 145, 30, 10, "F");
-      pdf.text("Category", 17, 152);  
-      pdf.text("Amount", 57, 152);   
-  
-      
+      pdf.text("Category", 17, 152);
+      pdf.text("Amount", 57, 152);
+
       let yPos = 160;
-      
+
       categories.forEach((category, index) => {
         const color = colors[index];
-  
-        
+
         pdf.setFillColor(color);
         pdf.rect(15, yPos - 5, 5, 5, "F");
-  
-       
+
         pdf.setTextColor(40, 44, 52);
         pdf.text(category, 22, yPos);
-  
- 
+
         pdf.text(`${categoryTotals[category].toFixed(2)} INR`, 57, yPos);
-  
-        yPos += 10; 
+
+        yPos += 10;
       });
-  
-    
+
       const currentDate = new Date().toLocaleDateString();
       pdf.setFontSize(10);
       pdf.setTextColor(150);
-      pdf.text(`Report generated on: ${currentDate}`, 15, 285); 
-      pdf.text(`Page 1 of 1`, 195, 285, null, null, "right"); 
-  
-      
+      pdf.text(`Report generated on: ${currentDate}`, 15, 285);
+      pdf.text(`Page 1 of 1`, 195, 285, null, null, "right");
+
       pdf.save("expense-report.pdf");
     }
   };
-  
 
   return (
     <Box
@@ -246,12 +251,13 @@ const Reports = () => {
                     marginRight: "10px",
                   }}
                 />
-                <ListItemText primary={`${category}: ${categoryTotals[category]}`} />
+                <ListItemText
+                  primary={`${category}: ${categoryTotals[category]}`}
+                />
               </ListItem>
             ))}
           </List>
 
-         
           <Button
             variant="contained"
             color="primary"

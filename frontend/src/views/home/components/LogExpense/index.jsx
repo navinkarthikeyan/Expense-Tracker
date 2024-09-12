@@ -13,6 +13,7 @@ const ExpenseForm = () => {
   const [newCategory, setNewCategory] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [isMember, setIsMember] = useState(false);
 
   const {
     categories,
@@ -24,6 +25,8 @@ const ExpenseForm = () => {
   } = useApi();
 
   useEffect(() => {
+    const isMemberHex = localStorage.getItem("ismember");
+    setIsMember(isMemberHex === "0x1");
     fetchCategories();
   }, [fetchCategories]);
 
@@ -56,7 +59,7 @@ const ExpenseForm = () => {
     { label: "View Expenses", path: "/home" },
     { label: "Log Expense", path: "/home/log-expense" },
     { label: "View Budget", path: "/home/view-budget" },
-    { label: "Analytics", path: "/home/analytics" },
+    ...(isMember ? [{ label: "Analytics", path: "/home/analytics" }] : []), // Include Analytics only if isMember is true
   ];
 
   const handleDeleteCategory = async (categoryId) => {

@@ -29,33 +29,31 @@ const ExpenseLoggingForm = ({
       onChange={(e) => setAmount(e.target.value)}
       required
       sx={{
+        backgroundColor: "white",
+        borderRadius: "4px",
         marginBottom: "20px",
-        "& .MuiInputBase-input": {
-          color: "white",
-        },
-        "& .MuiSelect-select": {
-          color: "white",
-        },
-        "& .MuiFormLabel-root": {
-          color: "white",
-        },
-      }}
+      }} 
     />
-    <FormControl fullWidth required sx={{ marginBottom: "20px" }}>
-      <InputLabel sx={{ color: "white" }}>Select Category</InputLabel>
+    <FormControl
+      variant="filled"
+      fullWidth
+      required
+      sx={{ marginBottom: "20px" }}
+    >
+      <InputLabel>Select Category</InputLabel>
       <Select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
+        variant="filled"
         sx={{
-          color: "white",
-          "& .MuiSelect-icon": {
-            color: "white",
-          },
+          backgroundColor: "white",
+          color: "black",
+          borderRadius: "4px",
           "& .MuiSelect-select": {
-            color: "white",
+            backgroundColor: "white", 
           },
-          "& .MuiMenuItem-root": {
-            color: "black",
+          "&:focus": {
+            backgroundColor: "white", 
           },
         }}
       >
@@ -69,6 +67,7 @@ const ExpenseLoggingForm = ({
         ))}
       </Select>
     </FormControl>
+
     <TextField
       type="date"
       fullWidth
@@ -76,12 +75,14 @@ const ExpenseLoggingForm = ({
       onChange={(e) => setDate(e.target.value)}
       required
       sx={{
-        marginBottom: "20px",
+        backgroundColor: "white", 
+        borderRadius: "4px", 
+        marginBottom: "20px", 
         "& .MuiInputBase-input": {
-          color: "white",
+          color: "black", 
         },
         "& .MuiFormLabel-root": {
-          color: "white",
+          color: "black",
         },
       }}
     />

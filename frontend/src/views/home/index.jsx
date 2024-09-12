@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import Sidebar from '../sidebar/Sidebar';
 import Footer from './components/Footer';
@@ -21,6 +21,12 @@ const Home = () => {
   const [searchCategory, setSearchCategory] = useState('');
   const [searchDate, setSearchDate] = useState('');
   const [amountSort, setAmountSort] = useState('');
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(() => {
+    const isMemberHex = localStorage.getItem("ismember");
+    setIsMember(isMemberHex === "0x1");
+  }, []);
 
   const handleOpenUpdateDialog = (expense) => {
     setSelectedExpense(expense);
@@ -58,7 +64,7 @@ const Home = () => {
     { label: 'View Expenses', path: '/home' },
     { label: 'Log Expense', path: '/home/log-expense' },
     { label: 'View Budget', path: '/home/view-budget' },
-    { label: 'Analytics', path: '/home/analytics' },
+    ...(isMember ? [{ label: 'Analytics', path: '/home/analytics' }] : []), // Include Analytics only if isMember is true
   ];
 
   return (
