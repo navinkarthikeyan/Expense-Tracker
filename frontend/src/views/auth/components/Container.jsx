@@ -12,12 +12,13 @@ const Container = ({ children }) => {
         height: "100vh",
         width: "100vw",
         color: "white",
+        padding: { xs: "20px", sm: "40px" }, 
       }}
     >
       <Typography
         variant="h1"
         sx={{
-          fontSize: "4rem",
+          fontSize: { xs: "2rem", sm: "4rem" }, 
           fontWeight: "bold",
           mb: 4,
         }}
@@ -26,11 +27,12 @@ const Container = ({ children }) => {
       </Typography>
       <Box
         sx={{
-          minWidth: "500px",
+          width: { xs: "90%", sm: "500px" },
           borderRadius: "20px",
-          p: "40px 30px",
+          p: { xs: "20px", sm: "40px 30px" }, 
           backgroundColor: "#e3e3e3",
           color: "black",
+          boxShadow: 3, 
         }}
       >
         {children}

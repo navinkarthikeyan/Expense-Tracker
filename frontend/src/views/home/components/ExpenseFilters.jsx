@@ -6,14 +6,12 @@ const ExpenseFilters = ({
   setSearchCategory,
   searchDate,
   setSearchDate,
-  amountSort,
-  setAmountSort
 }) => {
   return (
     <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
       <TextField
         label="Search by Category"
-        variant="outlined"
+        variant="filled"
         fullWidth
         value={searchCategory}
         onChange={(e) => setSearchCategory(e.target.value)}
@@ -22,22 +20,11 @@ const ExpenseFilters = ({
       <TextField
         variant="outlined"
         type="date"
-        fullWidth
+      
+        sx={{ width: 250, backgroundColor: "white", borderRadius: "4px" }}
         value={searchDate}
         onChange={(e) => setSearchDate(e.target.value)}
-        sx={{ backgroundColor: "white", borderRadius: "4px" }}
       />
-      <TextField
-        select
-        label="Sort Amount"
-        value={amountSort}
-        onChange={(e) => setAmountSort(e.target.value)}
-        sx={{ backgroundColor: "white", borderRadius: "4px", minWidth: "200px" }}
-      >
-        <MenuItem value="">Default</MenuItem>
-        <MenuItem value="asc">Ascending</MenuItem>
-        <MenuItem value="desc">Descending</MenuItem>
-      </TextField>
     </Box>
   );
 };

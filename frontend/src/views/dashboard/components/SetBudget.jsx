@@ -39,12 +39,20 @@ const SetBudget = () => {
 
       if (response.status === 200) {
         toast.success("Budget updated successfully!");
-        setError(""); // Clear any previous error
+        setError("");
       }
     } catch (error) {
       console.error("Error updating budget:", error);
+
+      if (error.response && error.response.data) {
+        const errorMessage =
+          error.response.data.amount || "Failed to update budget.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Failed to update budget.");
+      }
+
       setMessage("");
-      toast.error("Failed to update budget.");
     }
   };
 
@@ -76,7 +84,7 @@ const SetBudget = () => {
           <Typography
             variant="h4"
             gutterBottom
-            sx={{ color: "#fff", fontWeight: 500, marginBottom: "30px" }}
+            sx={{ color: "white", fontWeight: 500, marginBottom: "30px" }} // Change text color to black
           >
             Set Budget
           </Typography>
@@ -92,7 +100,7 @@ const SetBudget = () => {
               display: "flex",
               flexDirection: "column",
               gap: 2,
-              backgroundColor: "#2e2e2e",
+              backgroundColor: "#fff", // Change to white
               padding: "40px",
               borderRadius: "8px",
               boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
@@ -105,11 +113,15 @@ const SetBudget = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               fullWidth
-              InputLabelProps={{ style: { color: "#888" } }}
-              InputProps={{
-                style: { color: "#fff" },
+              sx={{
+                "& .MuiInputLabel-root": { color: "#000" }, // Change label color to black
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#000" }, // Change border color to black
+                  "&:hover fieldset": { borderColor: "#000" },
+                  "&.Mui-focused fieldset": { borderColor: "#000" },
+                  "& input": { color: "#000" }, // Change input text color to black
+                },
               }}
-              
             />
 
             <TextField
@@ -120,11 +132,15 @@ const SetBudget = () => {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               fullWidth
-              InputLabelProps={{ style: { color: "#888" } }}
-              InputProps={{
-                style: { color: "#fff" },
+              sx={{
+                "& .MuiInputLabel-root": { color: "#000" }, // Change label color to black
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#000" }, // Change border color to black
+                  "&:hover fieldset": { borderColor: "#000" },
+                  "&.Mui-focused fieldset": { borderColor: "#000" },
+                  "& input": { color: "#000" }, // Change input text color to black
+                },
               }}
-              
             />
 
             <Button
@@ -163,7 +179,7 @@ const SetBudget = () => {
           {budget && (
             <Typography
               variant="body1"
-              sx={{ color: "#fff", marginTop: "20px" }}
+              sx={{ color: "#000", marginTop: "20px" }} // Change text color to black
             >
               Current Budget: ${budget}
             </Typography>

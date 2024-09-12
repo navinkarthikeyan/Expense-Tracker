@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-} from "@mui/material";
+import { Box, Typography, Button, TextField, Grid } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import Sidebar from "../../sidebar/Sidebar";
 import useExpenses from "../../../api/useExpenses";
 import useBudget from "../../../api/useBudget";
@@ -24,16 +13,11 @@ const ViewBudget = () => {
   const [monthlyBudget, setMonthlyBudget] = useState({});
   const [originalBudget, setOriginalBudget] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-  const [isMember, setIsMember] = useState(false); // Add state for isMember
+  const [isMember, setIsMember] = useState(false);
 
-  // Fetch the membership status from local storage when component mounts
   useEffect(() => {
     const isMemberHex = localStorage.getItem("ismember");
-    if (isMemberHex === "0x1") {
-      setIsMember(true); // Member (editable)
-    } else {
-      setIsMember(false); // Non-member (not editable)
-    }
+    setIsMember(isMemberHex === "0x1");
 
     const fetchMonthlyBudget = async () => {
       try {
@@ -61,20 +45,13 @@ const ViewBudget = () => {
   );
 
   const handleEditChange = (month, value) => {
-    if (!isMember) return; // Prevent editing if the user is not a member
+    if (!isMember) return;
     setIsEditing(true);
     setMonthlyBudget((prev) => ({
       ...prev,
       [month]: parseInt(value) || 0,
     }));
   };
-
-  const homeMenuItems = [
-    { label: "View Expenses", path: "/home" },
-    { label: "Log Expense", path: "/home/log-expense" },
-    { label: "View Budget", path: "/home/view-budget" },
-    { label: "Analytics", path: "/home/analytics" },
-  ];
 
   const handleSubmit = async () => {
     const months = [
@@ -118,20 +95,44 @@ const ViewBudget = () => {
 
       await fetchMonthlyBudget();
     } catch (error) {
-      toast.error("Failed to update the budget.");
+      // toast.error("Failed to update the budget.");
     }
   };
+
+  const columns = [
+    { field: "month", headerName: "Month", flex: 1, editable: false },
+    {
+      field: "amount",
+      headerName: "Amount ₹",
+      flex: 1,
+      renderCell: (params) => (
+        <TextField
+          type="text"
+          value={monthlyBudget[params.row.month.toLowerCase()] || params.value}
+          onChange={(e) =>
+            handleEditChange(params.row.month.toLowerCase(), e.target.value)
+          }
+          disabled={!isMember}
+          InputProps={{
+            sx: {
+              color: "white",
+              backgroundColor: "#333",
+              borderRadius: "4px",
+            },
+          }}
+          sx={{ width: "100%" }}
+        />
+      ),
+    },
+  ];
 
   const rows = Object.entries(monthlyBudget)
     .filter(([month]) => month !== "user" && month !== "total_amount")
     .map(([month, amount]) => ({
+      id: month,
       month: month.charAt(0).toUpperCase() + month.slice(1),
       amount,
     }));
-
-  const hasChanges = Object.entries(monthlyBudget).some(
-    ([month, amount]) => amount !== originalBudget[month]
-  );
 
   return (
     <Box
@@ -143,7 +144,14 @@ const ViewBudget = () => {
         overflow: "hidden",
       }}
     >
-      <Sidebar menuItems={homeMenuItems} />
+      <Sidebar
+        menuItems={[
+          { label: "View Expenses", path: "/home" },
+          { label: "Log Expense", path: "/home/log-expense" },
+          { label: "View Budget", path: "/home/view-budget" },
+          { label: "Analytics", path: "/home/analytics" },
+        ]}
+      />
       <Box
         className="dashboard"
         sx={{
@@ -152,7 +160,7 @@ const ViewBudget = () => {
           color: "white",
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
+          overflowY: "auto", // To handle overflow on small screens
         }}
       >
         <Typography
@@ -162,11 +170,6 @@ const ViewBudget = () => {
         >
           View Budget
         </Typography>
-
-        {expensesError && (
-          <Typography color="error">{expensesError}</Typography>
-        )}
-        {budgetError && <Typography color="error">{budgetError}</Typography>}
 
         <Typography
           variant="h6"
@@ -187,102 +190,60 @@ const ViewBudget = () => {
           <Box
             sx={{
               marginTop: "20px",
-              height: "calc(100vh - 350px)",
+              height: "550px",
               width: "100%",
-              display: "flex",
-              flexDirection: "column",
+              backgroundColor: "#1a1a1a",
+              borderRadius: "4px",
+              "& .MuiDataGrid-cell": {
+                color: "white",
+                borderRight: "1px solid #444",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#333",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                backgroundColor: "#333",
+              },
+              "& .MuiTablePagination-displayedRows": {
+                color: "white",
+              },
+              "& .MuiTablePagination-selectLabel": {
+                color: "white",
+              },
+              "& .MuiTablePagination-input": {
+                color: "white",
+              },
             }}
           >
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ display: "flex", justifyContent: "center" }}
-            >
-              Monthly Budget
-            </Typography>
-            <TableContainer
-              component={Paper}
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              disableSelectionOnClick
+              getRowId={(row) => row.id}
               sx={{
-                backgroundColor: "#1a1a1a",
-                color: "white",
-                borderRadius: "4px",
-                boxShadow: "none",
-                flexGrow: 1,
-                overflowY: "auto",
-                marginBottom: hasChanges ? "80px" : "0px",
-              }}
-            >
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      sx={{
-                        color: "white",
-                        fontWeight: "bold",
-                        backgroundColor: "#333",
-                      }}
-                    >
-                      Month
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: "white",
-                        fontWeight: "bold",
-                        backgroundColor: "#333",
-                      }}
-                    >
-                      Amount ₹
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.month}>
-                      <TableCell sx={{ color: "white" }}>{row.month}</TableCell>
-                      <TableCell sx={{ color: "white" }}>
-                        <TextField
-                          type="text"
-                          value={monthlyBudget[row.month.toLowerCase()] || row.amount}
-                          onChange={(e) => {
-                            const month = row.month.toLowerCase();
-                            handleEditChange(month, e.target.value);
-                          }}
-                          disabled={!isMember} // Disable input if not a member
-                          InputProps={{
-                            sx: {
-                              color: "white",
-                              backgroundColor: "#333",
-                              borderRadius: "4px",
-                            },
-                          }}
-                          sx={{ width: "100%" }}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {hasChanges && isMember && (
-              <Box
-                sx={{
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#333",
+                  color: "white",
                   display: "flex",
-                  justifyContent: "center",
-                  position: "absolute",
-                  bottom: "20px",
-                  left: 0,
-                  right: 0,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </Button>
-              </Box>
-            )}
+                  justifyContent: "space-between",
+                },
+              }}
+            />
+          </Box>
+        )}
+        {isEditing && isMember && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button variant="contained" color="secondary" onClick={handleSubmit}>
+              Submit
+            </Button>
           </Box>
         )}
       </Box>

@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../../sidebar/Sidebar";
-import { Box, Container, Typography, Paper, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Container, Typography, Paper, List, ListItem, ListItemText, Button } from "@mui/material";
 import { Pie } from "react-chartjs-2";
 import axios from "axios";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const Reports = () => {
   const [expenseData, setExpenseData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const chartRef = useRef(null); // Ref to capture the chart component
 
   const adminMenuItems = [
     { label: "Dashboard", path: "/dashboard" },
@@ -93,6 +96,82 @@ const Reports = () => {
     },
   };
 
+  const handleDownloadReport = async () => {
+    const chartCanvas = chartRef.current;
+  
+    if (chartCanvas) {
+      const canvas = await html2canvas(chartCanvas, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+  
+      const pdf = new jsPDF();
+      
+     
+      pdf.setFontSize(22);
+      pdf.setTextColor(40, 44, 52); 
+      pdf.text("Expense Report", 105, 20, null, null, "center"); 
+  
+     
+      pdf.setFontSize(14);
+      pdf.setTextColor(100);
+      pdf.text("Overview of spending by category", 105, 28, null, null, "center");
+  
+      
+      pdf.setLineWidth(0.5);
+      pdf.setDrawColor(150); 
+      pdf.line(15, 35, 195, 35);
+  
+     
+      pdf.addImage(imgData, "PNG", 25, 40, 160, 90); 
+      
+      
+      pdf.setFontSize(12);
+      pdf.setTextColor(40, 44, 52);
+      pdf.text("Spending by Category", 15, 140);
+  
+      
+      pdf.line(15, 142, 195, 142);
+  
+      
+      pdf.setFontSize(11);
+      pdf.setFillColor(230, 230, 230); 
+      pdf.rect(15, 145, 40, 10, "F"); 
+      pdf.rect(55, 145, 30, 10, "F");
+      pdf.text("Category", 17, 152);  
+      pdf.text("Amount", 57, 152);   
+  
+      
+      let yPos = 160;
+      
+      categories.forEach((category, index) => {
+        const color = colors[index];
+  
+        
+        pdf.setFillColor(color);
+        pdf.rect(15, yPos - 5, 5, 5, "F");
+  
+       
+        pdf.setTextColor(40, 44, 52);
+        pdf.text(category, 22, yPos);
+  
+ 
+        pdf.text(`${categoryTotals[category].toFixed(2)} INR`, 57, yPos);
+  
+        yPos += 10; 
+      });
+  
+    
+      const currentDate = new Date().toLocaleDateString();
+      pdf.setFontSize(10);
+      pdf.setTextColor(150);
+      pdf.text(`Report generated on: ${currentDate}`, 15, 285); 
+      pdf.text(`Page 1 of 1`, 195, 285, null, null, "right"); 
+  
+      
+      pdf.save("expense-report.pdf");
+    }
+  };
+  
+
   return (
     <Box
       sx={{
@@ -135,7 +214,7 @@ const Reports = () => {
           {loading ? (
             <Typography>Loading...</Typography>
           ) : (
-            <Box sx={{ width: "100%", height: "100%" }}>
+            <Box ref={chartRef} sx={{ width: "100%", height: "100%" }}>
               <Pie data={chartData} options={chartOptions} />
             </Box>
           )}
@@ -171,6 +250,16 @@ const Reports = () => {
               </ListItem>
             ))}
           </List>
+
+         
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleDownloadReport}
+            sx={{ marginTop: "20px" }}
+          >
+            Download Report
+          </Button>
         </Box>
       </Container>
     </Box>

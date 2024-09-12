@@ -53,10 +53,10 @@ const ExpenseForm = () => {
   };
 
   const homeMenuItems = [
-    { label: 'View Expenses', path: '/home' },
-    { label: 'Log Expense', path: '/home/log-expense' },
-    { label: 'View Budget', path: '/home/view-budget' },
-    { label: 'Analytics', path: '/home/analytics' },
+    { label: "View Expenses", path: "/home" },
+    { label: "Log Expense", path: "/home/log-expense" },
+    { label: "View Budget", path: "/home/view-budget" },
+    { label: "Analytics", path: "/home/analytics" },
   ];
 
   const handleDeleteCategory = async (categoryId) => {
@@ -72,7 +72,7 @@ const ExpenseForm = () => {
         display: "flex",
       }}
     >
-     <Sidebar menuItems={homeMenuItems} />
+      <Sidebar menuItems={homeMenuItems} />
       <Container
         component={Paper}
         elevation={3}

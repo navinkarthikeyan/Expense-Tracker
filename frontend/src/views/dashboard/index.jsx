@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogTitle,
   Button,
+  TextField,
 } from "@mui/material";
 import Footer from "../home/components/Footer";
 import axios from "axios";
@@ -23,9 +24,10 @@ const AdminDash = () => {
   const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState(null); 
-  const [newRole, setNewRole] = useState(""); 
-  const [open, setOpen] = useState(false); 
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newRole, setNewRole] = useState("");
+  const [open, setOpen] = useState(false);
+  const [roleFilter, setRoleFilter] = useState(""); // State for role filter
 
   const handleLogout = () => {
     console.log("logout");
@@ -62,6 +64,12 @@ const AdminDash = () => {
     fetchUsers();
   }, []);
 
+  const adminMenuItems = [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Set Budget", path: "/dashboard/set-budget" },
+    { label: "Reports", path: "/dashboard/reports" },
+  ];
+
   const handleOpenDialog = (user) => {
     setSelectedUser(user);
     setNewRole(user.role);
@@ -73,12 +81,6 @@ const AdminDash = () => {
     setSelectedUser(null);
     setNewRole("");
   };
-
-  const adminMenuItems = [
-    { label: "Dashboard", path: "/dashboard" },
-    { label: "Set Budget", path: "/dashboard/set-budget" },
-    { label: "Reports", path: "/dashboard/reports" },
-  ];
 
   const handleRoleChange = async () => {
     if (!selectedUser) return;
@@ -115,6 +117,10 @@ const AdminDash = () => {
       console.error("Error updating user role:", error);
     }
   };
+
+  const filteredUsers = roleFilter
+    ? users.filter((user) => user.role === roleFilter)
+    : users;
 
   const columns = [
     { field: "id", headerName: "ID", flex: 1 },
@@ -174,6 +180,39 @@ const AdminDash = () => {
           Manage Role
         </Typography>
 
+        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+          <label htmlFor="sortRole" style={{ color: "white" }}>
+            Sort Role
+          </label>
+          <select
+            id="sortRole"
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            style={{
+              width: "10%",
+              backgroundColor: "black",
+              color: "white",
+              border: "1px solid white",
+              borderRadius: "4px",
+              padding: "5px",
+              outline: "none",
+            }}
+          >
+            <option value="" style={{ color: "white" }}>
+              All Roles
+            </option>
+            <option value="admin" style={{ color: "white" }}>
+              Admin
+            </option>
+            <option value="member" style={{ color: "white" }}>
+              Member
+            </option>
+            <option value="user" style={{ color: "white" }}>
+              User
+            </option>
+          </select>
+        </Box>
+
         {loading ? (
           <Typography variant="h6" sx={{ textAlign: "center" }}>
             Loading users...
@@ -207,7 +246,7 @@ const AdminDash = () => {
             }}
           >
             <DataGrid
-              rows={users}
+              rows={filteredUsers}
               columns={columns}
               pageSize={5}
               rowsPerPageOptions={[5]}
@@ -222,7 +261,6 @@ const AdminDash = () => {
 
       <Footer />
 
-    
       <Dialog open={open} onClose={handleCloseDialog}>
         <DialogTitle>Change Role</DialogTitle>
         <DialogContent>

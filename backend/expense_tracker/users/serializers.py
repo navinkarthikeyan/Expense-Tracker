@@ -77,6 +77,11 @@ class ExpenseSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         # Ensure category queryset is restricted to the categories of the current user
         self.fields['category'].queryset = Category.objects.filter(user=self.context['request'].user)
+    
+    def validate_amount(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Amount cannot be below 0.")
+        return value
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -89,6 +94,11 @@ class BudgetSerializer(serializers.ModelSerializer):
         model = Budget
         fields = ['user', 'amount']
         read_only_fields = ['user']
+    
+    def validate_amount(self, value):
+        if value < 0:
+            raise serializers.ValidationError("The budget amount must be greater than or equal to zero.")
+        return value
         
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:

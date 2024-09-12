@@ -21,6 +21,7 @@ const ExpenseLoggingForm = ({
   <form onSubmit={handleSubmitExpense}>
     <TextField
       label="Amount"
+      variant="filled"
       type="text"
       inputMode="numeric"
       fullWidth
@@ -30,6 +31,9 @@ const ExpenseLoggingForm = ({
       sx={{
         marginBottom: "20px",
         "& .MuiInputBase-input": {
+          color: "white",
+        },
+        "& .MuiSelect-select": {
           color: "white",
         },
         "& .MuiFormLabel-root": {

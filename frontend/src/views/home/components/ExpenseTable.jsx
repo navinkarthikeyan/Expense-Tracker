@@ -80,6 +80,7 @@ const ExpenseTable = ({
         pageSize={5}
         rowsPerPageOptions={[5]}
         disableSelectionOnClick
+        hideFooterSelectedRowCount
         getRowId={(row) => row.id}
         sx={{
           "& .MuiDataGrid-columnHeader": {

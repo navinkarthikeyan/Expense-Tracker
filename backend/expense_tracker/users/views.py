@@ -379,7 +379,7 @@ class UpdateBudgetMonthlyView(generics.UpdateAPIView):
         username = self.kwargs.get('username')
         user = get_object_or_404(get_user_model(), username=username)
 
-        # Ensure that the authenticated user is the same as the requested user
+        
         if self.request.user != user:
             raise serializers.ValidationError("You are not allowed to update another user's budget.")
         

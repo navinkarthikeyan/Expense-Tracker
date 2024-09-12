@@ -3,7 +3,7 @@ import { loginUser } from "../../../api";
 import { setUserData } from "../../../redux/user/slice";
 import Container from "../components/Container";
 import ActionButton from "../components/ActionButton";
-import Header from "../components/Header";  // Import Header component
+import Header from "../components/Header";  
 
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
@@ -58,9 +58,9 @@ const Login = () => {
 
 
         if (data?.role === "member") {
-          localStorage.setItem("ismember", "0x1"); // true as hex string
+          localStorage.setItem("ismember", "0x1"); 
         } else {
-          localStorage.setItem("ismember", "0x0"); // false as hex string
+          localStorage.setItem("ismember", "0x0"); 
         }
 
         handleRedirect(data?.role);
