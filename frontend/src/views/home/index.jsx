@@ -44,7 +44,7 @@ const Home = () => {
     handleCloseUpdateDialog();
   };
 
-  // Apply filters and sorting
+ 
   const filteredExpenses = expenses
     .filter((expense) => {
       const matchesCategory = expense.category.toLowerCase().includes(searchCategory.toLowerCase());
@@ -64,7 +64,7 @@ const Home = () => {
     { label: 'View Expenses', path: '/home' },
     { label: 'Log Expense', path: '/home/log-expense' },
     { label: 'View Budget', path: '/home/view-budget' },
-    ...(isMember ? [{ label: 'Analytics', path: '/home/analytics' }] : []), // Include Analytics only if isMember is true
+    ...(isMember ? [{ label: 'Analytics', path: '/home/analytics' }] : []), 
   ];
 
   return (

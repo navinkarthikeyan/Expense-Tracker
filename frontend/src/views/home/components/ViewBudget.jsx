@@ -16,7 +16,6 @@ const ViewBudget = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isMember, setIsMember] = useState(false);
 
-  
   const fetchMonthlySpending = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -27,7 +26,6 @@ const ViewBudget = () => {
         }
       );
 
-      
       const spendingByMonth = response.data.reduce((acc, expense) => {
         const month = new Date(expense.date)
           .toLocaleString("default", {
@@ -38,7 +36,6 @@ const ViewBudget = () => {
         return acc;
       }, {});
 
-      
       const months = [
         "january",
         "february",
@@ -143,7 +140,6 @@ const ViewBudget = () => {
           } must be greater than the current spending of ₹ ${spendingAmount}.`
         );
 
-       
         setMonthlyBudget(originalBudget);
         setIsEditing(false);
         return;
@@ -247,6 +243,7 @@ const ViewBudget = () => {
         height: "100vh",
         display: "flex",
         overflow: "hidden",
+        flexDirection: { xs: "column", md: "row" },
       }}
     >
       <Sidebar
@@ -267,27 +264,33 @@ const ViewBudget = () => {
           color: "white",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          maxWidth: { xs: "100%", md: "80%" },
+          marginLeft: { xs: "5%", md: "10%" }, // Add margin to the left to shift content to the right
         }}
       >
         <Typography
-          variant="h4"
-          gutterBottom
-          sx={{ display: "flex", justifyContent: "center" }}
-        >
-          View Budget
-        </Typography>
-
-        <Typography
           variant="h6"
           gutterBottom
-          sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+          sx={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+            fontSize: { xs: "16px", md: "20px" },
+          }}
         >
           Total Expense Amount: ₹ {totalAmount.toFixed(0)}
         </Typography>
         <Typography
           variant="h6"
           gutterBottom
-          sx={{ marginTop: "10px", display: "flex", justifyContent: "center" }}
+          sx={{
+            marginTop: "10px",
+            display: "flex",
+            justifyContent: "center",
+            fontSize: { xs: "16px", md: "20px" },
+          }}
         >
           Total Budget Limit: ₹ {budget ? budget : "N/A"}
         </Typography>
@@ -296,8 +299,9 @@ const ViewBudget = () => {
           <Box
             sx={{
               marginTop: "20px",
-              height: "550px",
+              height: "auto",
               width: "100%",
+              maxWidth: { xs: "100%", md: "80%" },
               backgroundColor: "#1a1a1a",
               borderRadius: "4px",
               "& .MuiDataGrid-cell": {
@@ -327,6 +331,7 @@ const ViewBudget = () => {
               pageSize={5}
               rowsPerPageOptions={[5]}
               disableSelectionOnClick
+              hideFooterSelectedRowCount
               getRowId={(row) => row.id}
               sx={{
                 "& .MuiDataGrid-columnHeader": {
@@ -339,23 +344,31 @@ const ViewBudget = () => {
             />
           </Box>
         )}
-        {isEditing && isMember && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "20px",
-            }}
-          >
+
+        {/* Space for the button - set a consistent height */}
+        <Box sx={{ height: "60px" }} />
+
+        {/* Submit button wrapper */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          {isEditing && isMember && (
             <Button
               variant="contained"
               color="secondary"
               onClick={handleSubmit}
+              sx={{
+                width: { xs: "100%", md: "auto" },
+              }}
             >
               Submit
             </Button>
-          </Box>
-        )}
+          )}
+        </Box>
       </Box>
     </Box>
   );

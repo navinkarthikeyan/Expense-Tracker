@@ -56,7 +56,7 @@ class LoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        # token, created = Token.objects.get_or_create(user=user)
+       
         token = get_tokens_for_user(user)
         response = Response({
             'token': token,
@@ -64,7 +64,7 @@ class LoginView(generics.GenericAPIView):
             'email': user.email,
             'role': user.role,
         })
-        # response.set_cookie('token', token, max_age=3600*24*7, secure=False, httponly=False, samesite='None')
+       
         return response 
 
 class PasswordResetRequestView(APIView):
@@ -157,12 +157,12 @@ class ExpenseListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        # Check if the user is an admin
+      
         if user.is_superuser or (hasattr(user, 'role') and user.role == 'admin'):
-            # If the user is admin, return all expenses
+           
             return Expense.objects.all()
         else:
-            # If the user is not admin, return only their own expenses
+           
             return Expense.objects.filter(user=user)
 
 class ExpenseUpdateView(generics.UpdateAPIView):
@@ -171,6 +171,36 @@ class ExpenseUpdateView(generics.UpdateAPIView):
 
     def get_queryset(self):
         return Expense.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        new_amount = serializer.validated_data['amount']
+        date = serializer.validated_data['date']
+        month = date.strftime('%B').lower()
+
+        expense_to_update = self.get_object()  
+
+        try:
+            budget_monthly = BudgetMonthly.objects.get(user=user)
+        except BudgetMonthly.DoesNotExist:
+            raise ValidationError({"error": "No monthly budget set for this user."})
+
+        monthly_budget = getattr(budget_monthly, month)
+
+       
+        total_expenses_for_month = Expense.objects.filter(
+            user=user, date__month=date.month
+        ).exclude(id=expense_to_update.id).aggregate(Sum('amount'))['amount__sum'] or 0
+
+       
+        if total_expenses_for_month + new_amount > monthly_budget:
+            remaining_budget = monthly_budget - total_expenses_for_month
+            raise ValidationError({
+                "error": f"Expense exceeds the budget for {date.strftime('%B')}. "
+                         f"Remaining budget: {remaining_budget}"
+            })
+
+        serializer.save(user=user)
 
 class ExpenseDeleteView(generics.DestroyAPIView):
     serializer_class = ExpenseSerializer
@@ -406,7 +436,7 @@ class UpdateBudgetMonthlyView(generics.UpdateAPIView):
 
         total_provided = sum(monthly_data.values())
 
-        # Ensure the total matches the budget amount
+       
         if total_provided != budget.amount:
             raise serializers.ValidationError(
                 f"The sum of monthly amounts ({total_provided}) does not equal the budget amount ({budget.amount})."
