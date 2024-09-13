@@ -4,7 +4,7 @@ Admins can set budgets and users can track their expenses against these limits.
 
 ## Features
 - **Expense Logging**: Users can log daily expenses with categories.
-- **Budget Management**: Admins can set and manage budgets.
+- **Budget Management**: Admins can set and users can manage budgets.
 - **Expense Tracking**: Users can track expenses against their budgets.
 - **Analytics and Reports**: Visualize expense data and generate reports.
 
