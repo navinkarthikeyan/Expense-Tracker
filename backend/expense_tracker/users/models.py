@@ -36,7 +36,7 @@ class Category(models.Model):
 
 class Expense(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='expenses')
-    amount = models.IntegerField(max_length=10)
+    amount = models.IntegerField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='expenses')
     date = models.DateField()
     
@@ -45,7 +45,7 @@ class Expense(models.Model):
 
 class Budget(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budgets')
-    amount = models.IntegerField(max_length=10)
+    amount = models.IntegerField()
 
     def _tr__(self):
         return f"{self.user.username} - {self.amount}"
@@ -55,21 +55,21 @@ class BudgetMonthly(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budget_monthly')
     
     # Monthly budget fields
-    january = models.IntegerField(max_length=10, default=0)
-    february = models.IntegerField(max_length=10, default=0)
-    march = models.IntegerField(max_length=10, default=0)
-    april = models.IntegerField(max_length=10, default=0)
-    may = models.IntegerField(max_length=10, default=0)
-    june = models.IntegerField(max_length=10, default=0)
-    july = models.IntegerField(max_length=10, default=0)
-    august = models.IntegerField(max_length=10, default=0)
-    september = models.IntegerField(max_length=10, default=0)
-    october = models.IntegerField(max_length=10, default=0)
-    november = models.IntegerField(max_length=10, default=0)
-    december = models.IntegerField(max_length=10, default=0)
+    january = models.IntegerField(default=0)
+    february = models.IntegerField(default=0)
+    march = models.IntegerField(default=0)
+    april = models.IntegerField(default=0)
+    may = models.IntegerField(default=0)
+    june = models.IntegerField(default=0)
+    july = models.IntegerField(default=0)
+    august = models.IntegerField(default=0)
+    september = models.IntegerField(default=0)
+    october = models.IntegerField(default=0)
+    november = models.IntegerField(default=0)
+    december = models.IntegerField(default=0)
     
     # Total amount field
-    total_amount = models.IntegerField(max_length=12)
+    total_amount = models.IntegerField()
 
     def caculate_total(self):
         # Method to calculate the total amount
