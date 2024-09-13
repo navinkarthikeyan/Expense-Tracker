@@ -30,8 +30,8 @@ Expensify supports different roles to manage and interact with expenses effectiv
 #### **3. Admins**
 
 - **Role Management**: Admins can manage user roles and permissions, ensuring that each user or member has the appropriate access.
-- **Budget Allocation**: Admins can allocate and manage budgets for different users or groups.
-- **Overall Reports**: Admins can generate comprehensive reports that provide an overview of all expenses and budgets across the system.
+- **Budget Allocation**: Admins can allocate budgets for different users
+- **Overall Reports**: Admins can generate overall reports
  
 
 ### **Prerequisites**
