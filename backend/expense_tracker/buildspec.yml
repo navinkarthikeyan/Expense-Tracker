@@ -18,7 +18,7 @@ phases:
   post_build:
     commands:
       - echo "Writing image definitions"
-      - printf '[{"name":"backend-container","imageUri":"562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest"}]' > imagedefinitions.json
+      - printf '[{"name":"backend-container","imageUri":"562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest"}]' 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest > imagedefinitions.json
       - echo "Image definitions file created"
 
 artifacts:
