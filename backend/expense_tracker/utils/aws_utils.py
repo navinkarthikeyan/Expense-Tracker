@@ -2,8 +2,7 @@ import os
 import boto3
 import base64
 from botocore.exceptions import ClientError
-from dotenv import load_dotenv
-load_dotenv()
+
 
 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')

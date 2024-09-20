@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner"; 
+import BASE_URL from "../../config";
 
 const useBudget = () => {
   const [budget, setBudget] = useState(null);
@@ -18,7 +19,7 @@ const useBudget = () => {
         }
 
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/users/budgets/view/",
+          `${BASE_URL}/api/users/budgets/view/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

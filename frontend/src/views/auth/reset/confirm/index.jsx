@@ -6,6 +6,7 @@ import ActionButton from "../../components/ActionButton";
 import { useParams } from "react-router-dom";
 import { Box, Button, TextField, Link, Typography } from "@mui/material";
 import { toast } from "sonner";
+import BASE_URL from "../../../../../config";
 
 
 const PasswordResetConfirm = () => {
@@ -15,7 +16,7 @@ const PasswordResetConfirm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const promise = axios.post(
-      `http://127.0.0.1:8000/api/users/password-reset-confirm/`,
+      `${BASE_URL}/api/users/password-reset-confirm/`,
       {
         uidb64: uidb64,
         token: token,

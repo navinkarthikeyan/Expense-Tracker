@@ -3,6 +3,7 @@ import Sidebar from "../../sidebar/Sidebar";
 import { Box, Typography, Button, TextField } from "@mui/material";
 import axios from "axios";
 import { toast } from "sonner";
+import BASE_URL from "../../../../config";
 
 const SetBudget = () => {
   const [username, setUsername] = useState("");
@@ -28,7 +29,7 @@ const SetBudget = () => {
       }
 
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/users/budgets/update/${username}/`,
+        `${BASE_URL}/api/users/budgets/update/${username}/`,
         { amount: parseFloat(amount) },
         {
           headers: {

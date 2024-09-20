@@ -1,6 +1,9 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import BASE_URL from "../../config";
+
+
 
 const useApi = () => {
   const [categories, setCategories] = useState([]);
@@ -10,7 +13,7 @@ const useApi = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/users/categories/",
+        `${BASE_URL}/api/users/categories/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -27,7 +30,7 @@ const useApi = () => {
     try {
       if (id) {
         await axios.put(
-          `http://127.0.0.1:8000/api/users/categories/${id}/`,
+          `${BASE_URL}/api/users/categories/${id}/`,
           { name: category },
           {
             headers: {
@@ -38,7 +41,7 @@ const useApi = () => {
         toast.success("Category updated successfully");
       } else {
         await axios.post(
-          "http://127.0.0.1:8000/api/users/categories/",
+          `${BASE_URL}/api/users/categories/`,
           { name: category },
           {
             headers: {
@@ -58,7 +61,7 @@ const useApi = () => {
     const token = localStorage.getItem("token");
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/api/users/categories/${id}/`,
+        `${BASE_URL}/api/users/categories/${id}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,7 +85,7 @@ const useApi = () => {
         return;
       }
       await axios.post(
-        "http://127.0.0.1:8000/api/users/expenses/create/",
+        `${BASE_URL}/api/users/expenses/create/`,
         { amount, category, date },
         {
           headers: {

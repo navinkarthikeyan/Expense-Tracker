@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import BASE_URL from "../../config";
 
 const useExpenses = () => {
   const [expenses, setExpenses] = useState([]);
@@ -15,14 +16,14 @@ const useExpenses = () => {
       }
 
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/users/expenses/",
+        `${BASE_URL}/api/users/expenses/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
+      
       setExpenses(response.data);
     } catch (err) {
       toast.error("Failed to fetch expenses.");
@@ -38,7 +39,7 @@ const useExpenses = () => {
       }
 
       await axios.delete(
-        `http://127.0.0.1:8000/api/users/expenses/delete/${expenseId}/`,
+        `${BASE_URL}/api/users/expenses/delete/${expenseId}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,7 +65,7 @@ const useExpenses = () => {
       }
 
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/users/expenses/update/${updatedExpense.id}/`,
+        `${BASE_URL}/api/users/expenses/update/${updatedExpense.id}/`,
         updatedExpense,
         {
           headers: {

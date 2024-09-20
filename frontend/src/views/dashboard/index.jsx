@@ -19,6 +19,7 @@ import {
 import Footer from "../home/components/Footer";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
+import BASE_URL from "../../../config";
 
 const AdminDash = () => {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const AdminDash = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/users/users/",
+          `${BASE_URL}/api/users/users/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -95,7 +96,7 @@ const AdminDash = () => {
       };
 
       await axios.patch(
-        `http://127.0.0.1:8000/api/users/users/${selectedUser.id}/`,
+        `${BASE_URL}/api/users/users/${selectedUser.id}/`,
         updatedFields,
         {
           headers: {

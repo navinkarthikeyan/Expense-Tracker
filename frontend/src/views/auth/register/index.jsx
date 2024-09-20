@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { setUserData } from "../../../redux/user/slice";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import BASE_URL from "../../../../config";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -78,7 +79,7 @@ const Register = () => {
       const token = localStorage.getItem("token");
       if (token) {
         const budgetResponse = await axios.post(
-          "http://127.0.0.1:8000/api/users/budgets/set/",
+          `${BASE_URL}/api/users/budgets/set/`,
           {
             username: username, 
             amount: 0.0, 

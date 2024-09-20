@@ -6,6 +6,7 @@ import useBudget from "../../../api/useBudget";
 import axios from "axios";
 import { toast } from "sonner"; 
 import BudgetTable from "./BudgetTable";
+import BASE_URL from "../../../../config";
 
 const ViewBudget = () => {
   const { expenses } = useExpenses();
@@ -20,7 +21,7 @@ const ViewBudget = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/users/expenses/",
+        `${BASE_URL}/api/users/expenses/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -69,7 +70,7 @@ const ViewBudget = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/users/budget-monthly/view/",
+          `${BASE_URL}/api/users/budget-monthly/view/`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -150,7 +151,7 @@ const ViewBudget = () => {
       const token = localStorage.getItem("token");
       const username = localStorage.getItem("username");
       await axios.put(
-        `http://127.0.0.1:8000/api/users/budget-monthly/update/${username}/`,
+        `${BASE_URL}/api/users/budget-monthly/update/${username}/`,
         monthlyBudget,
         {
           headers: { Authorization: `Bearer ${token}` },

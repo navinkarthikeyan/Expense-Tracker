@@ -13,6 +13,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import BASE_URL from "../../../../../config";
 
 ChartJS.register(
   CategoryScale,
@@ -42,7 +43,7 @@ const Index = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/users/expenses/",
+          `${BASE_URL}/api/users/expenses/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

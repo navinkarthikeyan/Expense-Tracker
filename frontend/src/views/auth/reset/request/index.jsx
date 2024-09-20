@@ -13,7 +13,7 @@ const PasswordResetRequest = () => {
     e.preventDefault();
     try {
       const promise = axios.post(
-        "http://127.0.0.1:8000/api/users/password-reset/",
+        `${BASE_URL}/api/users/password-reset/`,
         { email }
       );
       toast.promise(promise, {

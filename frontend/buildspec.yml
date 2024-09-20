@@ -1,0 +1,17 @@
+version: 0.2
+ 
+phases:
+  build:
+    commands:
+      - echo "Building the React app"
+      - echo "Logging in to Amazon ECR"
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 562773714884.dkr.ecr.ap-south-1.amazonaws.com
+      - echo "Building the Docker image for frontend"
+      - docker build -t expensify-frontend ./frontend
+      - docker tag expensify-frontend:latest 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-frontend:latest
+      - echo "Pushing the Docker image to ECR"
+      - docker push 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-frontend:latest
+ 
+artifacts:
+  files:
+    - "**/*"

@@ -15,6 +15,7 @@ import axios from "axios";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import BASE_URL from "../../../../../config";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
@@ -34,7 +35,7 @@ const Reports = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/users/expenses/",
+          `${BASE_URL}/api/users/expenses/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
