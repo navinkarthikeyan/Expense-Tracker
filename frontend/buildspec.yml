@@ -4,7 +4,7 @@ phases:
   build:
     commands:
       - echo "Logging in to Docker Hub"
-      - docker login --username <docker username> --password <docker password>
+      - docker login --username navin12 --password qwerty@123
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 562773714884.dkr.ecr.ap-south-1.amazonaws.com
       - echo "Building the Docker image for frontend"
