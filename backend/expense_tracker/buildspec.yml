@@ -1,21 +1,26 @@
 version: 0.2
- 
+
 phases:
   pre_build:
     commands:
+      - echo "Logging in to Docker Hub"
+      - docker login --username navin12 --password qwerty@123
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 562773714884.dkr.ecr.ap-south-1.amazonaws.com
-      - echo "Running Django tests"
-      - python manage.py test
- 
+
   build:
     commands:
       - echo "Building the Docker image for backend"
-      - docker build -t expensify-backend .
+      - docker build -t expensify-backend ./backend/expense_tracker
       - docker tag expensify-backend:latest 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest
       - echo "Pushing the Docker image to ECR"
       - docker push 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest
- 
+  post_build:
+    commands:
+      - echo "Writing image definitions"
+      - printf '[{"name":"backend-container","imageUri":"562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest"}]' > imagedefinitions.json
+      - echo "Image definitions file created"
+
 artifacts:
   files:
-    - "**/*"
+    - imagedefinitions.json
