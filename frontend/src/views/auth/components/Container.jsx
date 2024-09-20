@@ -23,7 +23,7 @@ const Container = ({ children }) => {
           mb: 4,
         }}
       >
-        Expensify
+        Expensify Tracker
       </Typography>
       <Box
         sx={{
