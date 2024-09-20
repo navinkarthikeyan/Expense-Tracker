@@ -15,7 +15,7 @@ phases:
   post_build:
     commands:
       - echo "Writing image definitions"
-      - printf '[{"name":"expensify-frontend-task","imageUri":"562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-frontend:latest"}]' 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-frontend:latest > imagedefinitions.json
+      - printf '[{"name":"frontend-container","imageUri":"562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-frontend:latest"}]' 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-frontend:latest > imagedefinitions.json
  
 artifacts:
   files:
