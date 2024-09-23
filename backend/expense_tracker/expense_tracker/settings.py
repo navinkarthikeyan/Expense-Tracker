@@ -90,10 +90,15 @@ WSGI_APPLICATION = 'expense_tracker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',  # Use 'mysql' if using MySQL
+        'NAME': 'expensify_db',  # The database name you created
+        'USER': 'navin',  # Your RDS master username
+        'PASSWORD': '27DEC2002',  # Your RDS master password
+        'HOST': 'expense-tracker-db.cheymscyw0wo.ap-south-1.rds.amazonaws.com',  # The RDS endpoint
+        'PORT': '5432',  # Default PostgreSQL port, or '3306' for MySQL
     }
 }
+
 
 
 # Password validation

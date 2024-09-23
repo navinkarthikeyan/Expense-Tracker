@@ -1,6 +1,8 @@
 # Use the official Python 3.11 image as a base
 FROM python:3.11-slim
 
+# RUN apt-get update && apt-get install -y libpq-dev gcc
+
 # Set the working directory in the container
 WORKDIR /app
 
@@ -23,4 +25,4 @@ RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Run the Django server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
