@@ -152,6 +152,27 @@ class ExpenseCreateView(generics.CreateAPIView):
 
        
         serializer.save(user=user)
+    
+    def trigger_lambda(self, email, total_expenses, remaining_budget, month):
+        client = boto3.client('lambda')
+        payload = {
+            "email": email,
+            "total_expenses": total_expenses,
+            "remaining_budget": remaining_budget,
+            "month": month
+        }
+        
+        try:
+            response = client.invoke(
+                FunctionName="ExpenseNotificationFunction",  # Lambda function name
+                InvocationType="Event",  # Non-blocking, async
+                Payload=json.dumps(payload)
+            )
+        except Exception as e:
+            raise ValidationError({
+                "error": "Failed to trigger notification Lambda.",
+                "details": str(e)
+            })
 
 
 class ExpenseListView(generics.ListAPIView):
