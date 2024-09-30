@@ -20,6 +20,10 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from django.db.models import Sum
 from .permissions import IsMemberOrAdmin
+import json
+import boto3
+from botocore.exceptions import ClientError
+import json
 
 
 User = get_user_model()
@@ -201,6 +205,27 @@ class ExpenseUpdateView(generics.UpdateAPIView):
             })
 
         serializer.save(user=user)
+    
+    def trigger_lambda(self, email, total_expenses, remaining_budget, month):
+        client = boto3.client('lambda')
+        payload = {
+            "email": email,
+            "total_expenses": total_expenses,
+            "remaining_budget": remaining_budget,
+            "month": month
+        }
+        
+        try:
+            response = client.invoke(
+                FunctionName="ExpenseNotificationFunction",  # Lambda function name
+                InvocationType="Event",  # Non-blocking, async
+                Payload=json.dumps(payload)
+            )
+        except ClientError as e:
+            raise ValidationError({
+                "error": "Failed to trigger notification Lambda.",
+                "details": str(e)
+            })
 
 class ExpenseDeleteView(generics.DestroyAPIView):
     serializer_class = ExpenseSerializer
