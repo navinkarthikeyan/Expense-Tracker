@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from debug_toolbar.toolbar import debug_toolbar_urls
 from .views import (
     RegisterView, 
     LoginView, 
@@ -50,4 +51,4 @@ urlpatterns = [
     
    
     path('', include(router.urls)), 
-]
+] + debug_toolbar_urls()
