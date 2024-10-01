@@ -24,6 +24,7 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 import json
+import requests
 
 
 User = get_user_model()
@@ -152,9 +153,12 @@ class ExpenseCreateView(generics.CreateAPIView):
 
        
         serializer.save(user=user)
-    
+        
+        email = user.email
+        self.trigger_lambda(email, total_expenses_for_month + amount, remaining_budget, month)
+
     def trigger_lambda(self, email, total_expenses, remaining_budget, month):
-        client = boto3.client('lambda')
+        api_url = "https://h3mfo8wj58.execute-api.ap-south-1.amazonaws.com/Test/trigger-lambda"
         payload = {
             "email": email,
             "total_expenses": total_expenses,
@@ -163,17 +167,14 @@ class ExpenseCreateView(generics.CreateAPIView):
         }
         
         try:
-            response = client.invoke(
-                FunctionName="ExpenseNotificationFunction",  # Lambda function name
-                InvocationType="Event",  # Non-blocking, async
-                Payload=json.dumps(payload)
-            )
-        except Exception as e:
+            # Make an HTTP POST request to API Gateway
+            response = requests.post(api_url, json=payload)
+            response.raise_for_status()  # Raise an exception if the request fails
+        except requests.exceptions.RequestException as e:
             raise ValidationError({
-                "error": "Failed to trigger notification Lambda.",
+                "error": "Failed to trigger notification via API Gateway.",
                 "details": str(e)
             })
-
 
 class ExpenseListView(generics.ListAPIView):
     serializer_class = ExpenseSerializer
@@ -227,8 +228,11 @@ class ExpenseUpdateView(generics.UpdateAPIView):
 
         serializer.save(user=user)
     
+        email = user.email
+        self.trigger_lambda(email, total_expenses_for_month + new_amount, remaining_budget, month)
+
     def trigger_lambda(self, email, total_expenses, remaining_budget, month):
-        client = boto3.client('lambda')
+        api_url = "https://h3mfo8wj58.execute-api.ap-south-1.amazonaws.com/Test/trigger-lambda"
         payload = {
             "email": email,
             "total_expenses": total_expenses,
@@ -237,14 +241,12 @@ class ExpenseUpdateView(generics.UpdateAPIView):
         }
         
         try:
-            response = client.invoke(
-                FunctionName="ExpenseNotificationFunction",  # Lambda function name
-                InvocationType="Event",  # Non-blocking, async
-                Payload=json.dumps(payload)
-            )
-        except ClientError as e:
+            # Make an HTTP POST request to API Gateway
+            response = requests.post(api_url, json=payload)
+            response.raise_for_status()  # Raise an exception if the request fails
+        except requests.exceptions.RequestException as e:
             raise ValidationError({
-                "error": "Failed to trigger notification Lambda.",
+                "error": "Failed to trigger notification via API Gateway.",
                 "details": str(e)
             })
 
