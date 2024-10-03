@@ -149,30 +149,44 @@ class ExpenseCreateView(generics.CreateAPIView):
         
         if total_expenses_for_month + amount > monthly_budget:
             remaining_budget = monthly_budget - total_expenses_for_month
+            email = user.email
+            self.trigger_lambda_via_api_gateway(
+                email, total_expenses_for_month + amount, remaining_budget, month
+            )
             raise ValidationError({"error": f"Expense exceeds the budget for {date.strftime('%B')}. Remaining budget: {remaining_budget}"})
+            
+            
 
        
         serializer.save(user=user)
         
-        email = user.email
-        self.trigger_lambda(email, total_expenses_for_month + amount, remaining_budget, month)
+       
+        
 
-    def trigger_lambda(self, email, total_expenses, remaining_budget, month):
-        api_url = "https://h3mfo8wj58.execute-api.ap-south-1.amazonaws.com/Test/trigger-lambda"
+    def trigger_lambda_via_api_gateway(self, email, total_expenses, remaining_budget, month):
+        api_gateway_url = "https://h3mfo8wj58.execute-api.ap-south-1.amazonaws.com/Test/trigger-lambda"
         payload = {
             "email": email,
             "total_expenses": total_expenses,
             "remaining_budget": remaining_budget,
             "month": month
         }
-        
+
+        headers = {'Content-Type': 'application/json'}
+
         try:
-            # Make an HTTP POST request to API Gateway
-            response = requests.post(api_url, json=payload)
-            response.raise_for_status()  # Raise an exception if the request fails
-        except requests.exceptions.RequestException as e:
+            # Make POST request to API Gateway
+            response = requests.post(api_gateway_url, json=payload, headers=headers)
+            
+            # Check response status
+            if response.status_code != 200:
+                raise ValidationError({
+                    "error": "Failed to trigger the Lambda function via API Gateway.",
+                    "details": response.text
+                })
+        except requests.RequestException as e:
             raise ValidationError({
-                "error": "Failed to trigger notification via API Gateway.",
+                "error": "Error while triggering the Lambda function.",
                 "details": str(e)
             })
 
@@ -221,32 +235,44 @@ class ExpenseUpdateView(generics.UpdateAPIView):
        
         if total_expenses_for_month + new_amount > monthly_budget:
             remaining_budget = monthly_budget - total_expenses_for_month
+            email = user.email
+            
+            self.trigger_lambda_via_api_gateway(
+                email, total_expenses_for_month + new_amount, remaining_budget, month
+            )
+            
             raise ValidationError({
                 "error": f"Expense exceeds the budget for {date.strftime('%B')}. "
                          f"Remaining budget: {remaining_budget}"
             })
 
         serializer.save(user=user)
-    
-        email = user.email
-        self.trigger_lambda(email, total_expenses_for_month + new_amount, remaining_budget, month)
 
-    def trigger_lambda(self, email, total_expenses, remaining_budget, month):
-        api_url = "https://h3mfo8wj58.execute-api.ap-south-1.amazonaws.com/Test/trigger-lambda"
+
+    def trigger_lambda_via_api_gateway(self, email, total_expenses, remaining_budget, month):
+        api_gateway_url = "https://h3mfo8wj58.execute-api.ap-south-1.amazonaws.com/Test/trigger-lambda"
         payload = {
             "email": email,
             "total_expenses": total_expenses,
             "remaining_budget": remaining_budget,
             "month": month
         }
-        
+
+        headers = {'Content-Type': 'application/json'}
+
         try:
-            # Make an HTTP POST request to API Gateway
-            response = requests.post(api_url, json=payload)
-            response.raise_for_status()  # Raise an exception if the request fails
-        except requests.exceptions.RequestException as e:
+            # Make POST request to API Gateway
+            response = requests.post(api_gateway_url, json=payload, headers=headers)
+            
+            # Check response status
+            if response.status_code != 200:
+                raise ValidationError({
+                    "error": "Failed to trigger the Lambda function via API Gateway.",
+                    "details": response.text
+                })
+        except requests.RequestException as e:
             raise ValidationError({
-                "error": "Failed to trigger notification via API Gateway.",
+                "error": "Error while triggering the Lambda function.",
                 "details": str(e)
             })
 
