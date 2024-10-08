@@ -4,21 +4,21 @@ phases:
   pre_build:
     commands:
       - echo "Logging in to Docker Hub"
-      - docker login --username navin12 --password qwerty@123
+      - docker login --username  --password 
       - echo "Logging in to Amazon ECR"
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 562773714884.dkr.ecr.ap-south-1.amazonaws.com
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 56277.dkr.ecr.ap-south-1.amazonaws.com
 
   build:
     commands:
       - echo "Building the Docker image for backend"
       - docker build -t expensify-backend ./backend/expense_tracker
-      - docker tag expensify-backend:latest 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest
+      - docker tag expensify-backend:latest 56277.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest
       - echo "Pushing the Docker image to ECR"
-      - docker push 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest
+      - docker push 56277.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest
   post_build:
     commands:
       - echo "Writing image definitions"
-      - printf '[{"name":"backend-container","imageUri":"562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest"}]' 562773714884.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest > imagedefinitions.json
+      - printf '[{"name":"backend-container","imageUri":"56277.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest"}]' 56277.dkr.ecr.ap-south-1.amazonaws.com/expensify-backend:latest > imagedefinitions.json
       - echo "Image definitions file created"
 
 artifacts:

@@ -17,8 +17,6 @@ class CustomUser(AbstractUser,PermissionsMixin):
     
     username = models.CharField(max_length=255, unique=True, db_index=True)  # Indexed
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=USER, db_index=True)  # Indexed
-    # is_active = models.BooleanField(default=True)
-    # is_staff = models.BooleanField(default=False)
     
     objects = CustomUserManager()
 

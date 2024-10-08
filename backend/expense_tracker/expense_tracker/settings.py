@@ -16,6 +16,9 @@ import os
 from decouple import config
 from dotenv import load_dotenv
 from utils.aws_utils import get_secret
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.django.middleware import XRayMiddleware
+from aws_xray_sdk.core import patch_all 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -63,6 +66,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
      'debug_toolbar.middleware.DebugToolbarMiddleware',
+     'aws_xray_sdk.ext.django.middleware.XRayMiddleware',
 ]
 
 ROOT_URLCONF = 'expense_tracker.urls'
@@ -96,7 +100,7 @@ DATABASES = {
         'NAME': 'expensify_db',  # The database name you created
         'USER': 'navin',  # Your RDS master username
         'PASSWORD': '27DEC2002',  # Your RDS master password
-        'HOST': 'expense-tracker-db.cheymscyw0wo.ap-south-1.rds.amazonaws.com',  # The RDS endpoint
+        'HOST': 'expense-tracker-db.ap-south-1.rds.amazonaws.com',  # The RDS endpoint
         'PORT': '5432',  # Default PostgreSQL port, or '3306' for MySQL
     }
 }
@@ -170,6 +174,21 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL=True
+
+# X-Ray configuration
+XRAY_RECORDER = {
+ 'AWS_XRAY_TRACING_NAME': 'Local-Django-App', 
+ 'AWS_XRAY_CONTEXT_MISSING': 'LOG_ERROR',
+ 'AWS_XRAY_TRACING_ENABLED': True,
+ 'AWS_XRAY_CAPTURE_HTTP_HEADERS': True,
+}
+
+xray_recorder.configure(
+ service=XRAY_RECORDER['AWS_XRAY_TRACING_NAME'],
+ daemon_address='127.0.0.1:2000' # Points to the local X-Ray Daemon
+)
+
+patch_all() 
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
